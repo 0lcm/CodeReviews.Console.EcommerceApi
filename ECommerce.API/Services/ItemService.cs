@@ -1,6 +1,7 @@
 ﻿using ECommerce.API.Interfaces;
 using ECommerce.API.Models;
 using ECommerce.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.API.Services;
 
@@ -28,5 +29,40 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
         };
 
         await repo.PostItemAsync(item);
+    }
+
+    public async Task<PagedResponse<ItemDto>> GetItemsAsync(PaginationParams paginationParams)
+    {
+        var query = await repo.GetItemsAsync();
+
+        if (!string.IsNullOrEmpty(paginationParams.SearchTerm))
+        {
+            query = query.Where(i => i.Name.Contains(paginationParams.SearchTerm)
+            ||  i.Artist.Contains(paginationParams.SearchTerm));
+        }
+
+        if (!string.IsNullOrEmpty(paginationParams.Genre))
+        {
+            query = query.Where(i => i.Genre == paginationParams.Genre);
+        }
+        
+        var totalRecords = await query.CountAsync();
+        var items = await query
+            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
+            .Take(paginationParams.PageSize)
+            .Select(i => new ItemDto
+            {
+                ItemId = i.ItemId,
+                Format = i.Format,
+                Type = i.Type,
+                Artist = i.Artist,
+                Name = i.Name,
+                Genre = i.Genre,
+                Price = i.Price,
+                Tags = i.Tags.Select(t => new TagDto{TagName = t.TagName}).ToList(),
+            })
+            .ToListAsync();
+        
+        return new PagedResponse<ItemDto>(items, paginationParams.PageNumber, paginationParams.PageSize, totalRecords);
     }
 }

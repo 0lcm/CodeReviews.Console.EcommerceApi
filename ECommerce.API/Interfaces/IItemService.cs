@@ -1,8 +1,10 @@
-﻿using ECommerce.Shared.Models;
+﻿using ECommerce.API.Models;
+using ECommerce.Shared.Models;
 
 namespace ECommerce.API.Interfaces;
 
 public interface IItemService
 {
     public Task PostItemAsync(CreateItemDto itemDto);
+    public Task<PagedResponse<ItemDto>> GetItemsAsync(PaginationParams paginationParams);
 }

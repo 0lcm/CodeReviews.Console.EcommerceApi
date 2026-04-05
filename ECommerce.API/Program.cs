@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using ECommerce.API.Data;
 using ECommerce.API.Interfaces;
 using ECommerce.API.Repositories;
@@ -6,7 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

@@ -1,4 +1,5 @@
 ﻿using ECommerce.API.Interfaces;
+using ECommerce.API.Models;
 using ECommerce.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,5 +14,16 @@ public class ItemsController(IItemService itemService) : ControllerBase
     {
         await itemService.PostItemAsync(itemDto);
         return Created();
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<PagedResponse<Item>>> GetItemsAsync([FromQuery] PaginationParams paginationParams)
+    {
+        var pagedResponse = await  itemService.GetItemsAsync(paginationParams);
+        if (pagedResponse.TotalRecords == 0)
+        {
+            return NotFound();
+        }
+        return Ok(pagedResponse);
     }
 }

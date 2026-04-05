@@ -1,0 +1,8 @@
+﻿using ECommerce.Shared.Models;
+
+namespace ECommerce.API.Interfaces;
+
+public interface IItemService
+{
+    public Task PostItemAsync(CreateItemDto itemDto);
+}

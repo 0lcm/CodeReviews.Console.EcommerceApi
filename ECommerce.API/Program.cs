@@ -1,4 +1,7 @@
 using ECommerce.API.Data;
+using ECommerce.API.Interfaces;
+using ECommerce.API.Repositories;
+using ECommerce.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +12,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApiDbContext>(options =>
     options.UseSqlite(DbConfig.GetConnectionString()));
+
+builder.Services.AddScoped<ITagRepository, TagRepository>();
+
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<IItemService, ItemService>();
 
 var app = builder.Build();
 

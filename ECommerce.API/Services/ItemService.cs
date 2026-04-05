@@ -33,7 +33,7 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
 
     public async Task<PagedResponse<ItemDto>> GetItemsAsync(PaginationParams paginationParams)
     {
-        var query = await repo.GetItemsAsync();
+        var query = repo.GetItems();
 
         if (!string.IsNullOrEmpty(paginationParams.SearchTerm))
         {
@@ -64,5 +64,26 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
             .ToListAsync();
         
         return new PagedResponse<ItemDto>(items, paginationParams.PageNumber, paginationParams.PageSize, totalRecords);
+    }
+
+    /// <summary>
+    /// Deletes an item by ID
+    /// </summary>
+    /// <param name="itemId"></param>
+    /// <returns>True after a successful deletion, false upon an unsuccessful attempt, or null upon a NotFound error.</returns>
+    public async Task<bool?> DeleteItemByIdAsync(int itemId)
+    {
+        var item = await repo.GetItemByIdAsync(itemId);
+        if (item is null)
+            return null;
+        try
+        {
+            await repo.DeleteItemAsync(item);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 }

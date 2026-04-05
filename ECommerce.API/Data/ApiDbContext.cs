@@ -12,6 +12,10 @@ public class ApiDbContext(DbContextOptions<ApiDbContext> options) : DbContext(op
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Item>().HasQueryFilter(i => !i.IsDeleted);
+        modelBuilder.Entity<Sale>().HasQueryFilter(s => !s.IsDeleted);
+        modelBuilder.Entity<Tag>().HasQueryFilter(t => !t.IsDeleted);
+        
         modelBuilder.Entity<Sale>().Ignore(s => s.TotalPrice);
     }
 

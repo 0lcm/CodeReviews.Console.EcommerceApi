@@ -7,4 +7,5 @@ public interface IItemService
 {
     public Task PostItemAsync(CreateItemDto itemDto);
     public Task<PagedResponse<ItemDto>> GetItemsAsync(PaginationParams paginationParams);
+    public Task<bool?> DeleteItemByIdAsync(int itemId);
 }

@@ -5,5 +5,7 @@ namespace ECommerce.API.Interfaces;
 public interface IItemRepository
 {
     public Task PostItemAsync(Item item);
-    public Task<IQueryable<Item>> GetItemsAsync();
+    public IQueryable<Item> GetItems();
+    public Task<Item?> GetItemByIdAsync(int id);
+    public Task DeleteItemAsync(Item item);
 }

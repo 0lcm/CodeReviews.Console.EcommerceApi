@@ -13,11 +13,22 @@ public class ItemRepository(ApiDbContext db) : IItemRepository
         await db.SaveChangesAsync();
     }
 
-    public async Task<IQueryable<Item>> GetItemsAsync()
+    public IQueryable<Item> GetItems()
     {
         return db.Items
             .Include(i => i.Tags)
             .OrderBy(i => i.ItemId)
             .AsQueryable();
+    }
+
+    public async Task<Item?> GetItemByIdAsync(int id)
+    {
+        return await db.Items.FindAsync(id);
+    }
+
+    public async Task DeleteItemAsync(Item item)
+    {
+        db.Items.Remove(item);
+        await db.SaveChangesAsync();
     }
 }

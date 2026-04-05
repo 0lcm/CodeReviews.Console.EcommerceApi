@@ -15,8 +15,12 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApiDbContext>(options =>
-    options.UseSqlite(DbConfig.GetConnectionString()));
+builder.Services.AddSingleton<SoftDeleteInterceptor>();
+
+builder.Services.AddDbContext<ApiDbContext>((sp, options) =>
+    options
+        .UseSqlite(DbConfig.GetConnectionString())
+        .AddInterceptors(sp.GetRequiredService<SoftDeleteInterceptor>()));
 
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 

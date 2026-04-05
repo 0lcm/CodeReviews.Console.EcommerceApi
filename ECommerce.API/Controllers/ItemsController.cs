@@ -26,4 +26,16 @@ public class ItemsController(IItemService itemService) : ControllerBase
         }
         return Ok(pagedResponse);
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteItemAsync([FromQuery] int itemId)
+    {
+        var success = await itemService.DeleteItemByIdAsync(itemId);
+        if (success is null)
+            return NotFound();
+        if (success is false)
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        
+        return NoContent();
+    }
 }

@@ -1,5 +1,7 @@
 ﻿using ECommerce.API.Interfaces;
 using ECommerce.API.Models;
+using ECommerce.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.API.Services;
 
@@ -8,21 +10,26 @@ public class SaleService(ISaleRepository repo, IItemRepository itemRepo) : ISale
     /// <summary>
     /// Posts a sale async
     /// </summary>
-    /// <param name="itemIds"></param>
     /// <returns>True upon a successful post, false upon an unsuccessful post, and null upon a NotFound error.</returns>
-    public async Task<bool?> PostSaleAsync(List<int> itemIds)
+    public async Task<bool?> PostSaleAsync(List<CreateSaleItemDto> saleItems)
     {
-        var items = new List<Item>();
-        foreach (var id in itemIds)
+        var soldItems = new List<SaleItem>();
+        foreach (var saleItemDto in saleItems)
         {
-            var item = await itemRepo.GetItemByIdAsync(id);
+            var item = await itemRepo.GetItemByIdAsync(saleItemDto.ItemId);
             if (item is null)
                 return null;
+
+            soldItems.Add(new SaleItem
+            {
+                Item = item,
+                Quantity = saleItemDto.Quantity,
+            });
         }
 
         var sale = new Sale
         {
-            SoldItems = items
+            SoldItems = soldItems,
         };
 
         try
@@ -34,5 +41,36 @@ public class SaleService(ISaleRepository repo, IItemRepository itemRepo) : ISale
         {
             return false;
         }
+    }
+
+    public async Task<PagedResponse<SaleDto>> GetSalesAsync(PaginationParams paginationParams)
+    {
+        var query = repo.GetSales();
+        var totalRecords = await query.CountAsync();
+        var sales = await query
+            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
+            .Take(paginationParams.PageSize)
+            .Select(s => new SaleDto
+            {
+                SaleId = s.SaleId,
+                SoldItems = s.SoldItems.Select(si => new SaleItemDto
+                {
+                    Quantity = si.Quantity,
+                    Item = new ItemDto
+                    {
+                        ItemId = si.Item.ItemId,
+                        Format = si.Item.Format,
+                        Type =  si.Item.Type,
+                        Name = si.Item.Name,
+                        Artist =  si.Item.Artist,
+                        Genre = si.Item.Genre,
+                        Price = si.Item.Price,
+                        Tags = si.Item.Tags.Select(t => new TagDto{TagName = t.TagName}).ToList(),
+                    }
+                }).ToList(),
+            }).ToListAsync();
+
+        return new PagedResponse<SaleDto>
+            (sales, paginationParams.PageNumber, paginationParams.PageSize, totalRecords);
     }
 }

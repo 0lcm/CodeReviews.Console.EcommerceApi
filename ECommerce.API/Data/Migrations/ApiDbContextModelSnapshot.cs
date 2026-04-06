@@ -69,9 +69,32 @@ namespace ECommerce.API.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("ItemId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("SaleId");
 
+                    b.HasIndex("ItemId");
+
                     b.ToTable("Sales");
+                });
+
+            modelBuilder.Entity("ECommerce.API.Models.SaleItem", b =>
+                {
+                    b.Property<int>("SaleId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("SaleId", "ItemId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("SaleItem");
                 });
 
             modelBuilder.Entity("ECommerce.API.Models.Tag", b =>
@@ -95,21 +118,6 @@ namespace ECommerce.API.Data.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("ItemSale", b =>
-                {
-                    b.Property<int>("SalesSaleId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SoldItemsItemId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("SalesSaleId", "SoldItemsItemId");
-
-                    b.HasIndex("SoldItemsItemId");
-
-                    b.ToTable("ItemSale");
-                });
-
             modelBuilder.Entity("ItemTag", b =>
                 {
                     b.Property<int>("ItemsItemId")
@@ -125,19 +133,30 @@ namespace ECommerce.API.Data.Migrations
                     b.ToTable("ItemTag");
                 });
 
-            modelBuilder.Entity("ItemSale", b =>
+            modelBuilder.Entity("ECommerce.API.Models.Sale", b =>
                 {
-                    b.HasOne("ECommerce.API.Models.Sale", null)
+                    b.HasOne("ECommerce.API.Models.Item", null)
+                        .WithMany("Sales")
+                        .HasForeignKey("ItemId");
+                });
+
+            modelBuilder.Entity("ECommerce.API.Models.SaleItem", b =>
+                {
+                    b.HasOne("ECommerce.API.Models.Item", "Item")
                         .WithMany()
-                        .HasForeignKey("SalesSaleId")
+                        .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerce.API.Models.Item", null)
-                        .WithMany()
-                        .HasForeignKey("SoldItemsItemId")
+                    b.HasOne("ECommerce.API.Models.Sale", "Sale")
+                        .WithMany("SoldItems")
+                        .HasForeignKey("SaleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Sale");
                 });
 
             modelBuilder.Entity("ItemTag", b =>
@@ -153,6 +172,16 @@ namespace ECommerce.API.Data.Migrations
                         .HasForeignKey("TagsTagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ECommerce.API.Models.Item", b =>
+                {
+                    b.Navigation("Sales");
+                });
+
+            modelBuilder.Entity("ECommerce.API.Models.Sale", b =>
+                {
+                    b.Navigation("SoldItems");
                 });
 #pragma warning restore 612, 618
         }

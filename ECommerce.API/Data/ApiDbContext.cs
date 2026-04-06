@@ -12,9 +12,21 @@ public class ApiDbContext(DbContextOptions<ApiDbContext> options) : DbContext(op
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<SaleItem>()
+            .HasKey(si => new { si.SaleId, si.ItemId });
+        modelBuilder.Entity<SaleItem>()
+            .HasOne(si => si.Sale)
+            .WithMany(s => s.SoldItems)
+            .HasForeignKey(si => si.SaleId);
+        modelBuilder.Entity<SaleItem>()
+            .HasOne(si => si.Item)
+            .WithMany()
+            .HasForeignKey(si => si.ItemId);
+        
         modelBuilder.Entity<Item>().HasQueryFilter(i => !i.IsDeleted);
         modelBuilder.Entity<Sale>().HasQueryFilter(s => !s.IsDeleted);
         modelBuilder.Entity<Tag>().HasQueryFilter(t => !t.IsDeleted);
+        modelBuilder.Entity<SaleItem>().HasQueryFilter(si => !si.Item.IsDeleted);
         
         modelBuilder.Entity<Sale>().Ignore(s => s.TotalPrice);
     }

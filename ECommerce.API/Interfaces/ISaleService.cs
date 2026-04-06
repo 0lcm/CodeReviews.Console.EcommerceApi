@@ -1,6 +1,10 @@
-﻿namespace ECommerce.API.Interfaces;
+﻿using ECommerce.API.Models;
+using ECommerce.Shared.Models;
+
+namespace ECommerce.API.Interfaces;
 
 public interface ISaleService
 {
-    public Task<bool?> PostSaleAsync(List<int> itemIds);
+    public Task<bool?> PostSaleAsync(List<CreateSaleItemDto> saleItems);
+    public Task<PagedResponse<SaleDto>> GetSalesAsync(PaginationParams paginationParams);
 }

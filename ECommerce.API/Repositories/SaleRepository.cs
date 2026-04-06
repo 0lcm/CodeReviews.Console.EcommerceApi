@@ -1,6 +1,7 @@
 ﻿using ECommerce.API.Data;
 using ECommerce.API.Interfaces;
 using ECommerce.API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.API.Repositories;
 
@@ -10,5 +11,13 @@ public class SaleRepository(ApiDbContext db) : ISaleRepository
     {
         db.Sales.Add(sale);
         await db.SaveChangesAsync();
+    }
+
+    public IQueryable<Sale> GetSales()
+    {
+        return db.Sales
+            .Include(s => s.SoldItems)
+            .OrderBy(s => s.SaleId)
+            .AsQueryable();
     }
 }

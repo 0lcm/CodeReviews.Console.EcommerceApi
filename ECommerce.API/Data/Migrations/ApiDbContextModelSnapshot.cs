@@ -48,16 +48,11 @@ namespace ECommerce.API.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("SaleId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("ItemId");
-
-                    b.HasIndex("SaleId");
 
                     b.ToTable("Items");
                 });
@@ -100,6 +95,21 @@ namespace ECommerce.API.Data.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("ItemSale", b =>
+                {
+                    b.Property<int>("SalesSaleId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SoldItemsItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("SalesSaleId", "SoldItemsItemId");
+
+                    b.HasIndex("SoldItemsItemId");
+
+                    b.ToTable("ItemSale");
+                });
+
             modelBuilder.Entity("ItemTag", b =>
                 {
                     b.Property<int>("ItemsItemId")
@@ -115,11 +125,19 @@ namespace ECommerce.API.Data.Migrations
                     b.ToTable("ItemTag");
                 });
 
-            modelBuilder.Entity("ECommerce.API.Models.Item", b =>
+            modelBuilder.Entity("ItemSale", b =>
                 {
                     b.HasOne("ECommerce.API.Models.Sale", null)
-                        .WithMany("SoldItems")
-                        .HasForeignKey("SaleId");
+                        .WithMany()
+                        .HasForeignKey("SalesSaleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.API.Models.Item", null)
+                        .WithMany()
+                        .HasForeignKey("SoldItemsItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ItemTag", b =>
@@ -135,11 +153,6 @@ namespace ECommerce.API.Data.Migrations
                         .HasForeignKey("TagsTagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ECommerce.API.Models.Sale", b =>
-                {
-                    b.Navigation("SoldItems");
                 });
 #pragma warning restore 612, 618
         }

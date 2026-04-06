@@ -27,6 +27,9 @@ builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IItemService, ItemService>();
 
+builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+builder.Services.AddScoped<ISaleService, SaleService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -44,8 +47,7 @@ using (var scope = app.Services.CreateScope())
         "ECommerce");
     Directory.CreateDirectory(dbDirectory);
     
-    var pendingMigrations = await db.Database.GetPendingMigrationsAsync();
-    var isFirstRun = pendingMigrations.Any();
+    var isFirstRun = !await db.Database.CanConnectAsync();
     
     await db.Database.MigrateAsync();
 

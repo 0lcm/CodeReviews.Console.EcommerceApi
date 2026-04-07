@@ -73,4 +73,26 @@ public class SaleService(ISaleRepository repo, IItemRepository itemRepo) : ISale
         return new PagedResponse<SaleDto>
             (sales, paginationParams.PageNumber, paginationParams.PageSize, totalRecords);
     }
+
+    /// <summary>
+    /// Deletes a sale asynchronously by ID
+    /// </summary>
+    /// <returns>True upon a successful deletion, false upon an unsuccessful deletion attempt,
+    /// or null upon a NotFound exception</returns>
+    public async Task<bool?> DeleteSaleByIdAsync(int saleId)
+    {
+        var sale = await repo.GetSaleByIdAsync(saleId);
+        if (sale is null)
+            return null;
+
+        try
+        {
+            await repo.DeleteSaleAsync(sale);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
 }

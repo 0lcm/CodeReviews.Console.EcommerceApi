@@ -13,12 +13,12 @@ public class SalesController(ISaleService saleService) : ControllerBase
     public async Task<IActionResult> PostSale([FromBody]List<CreateSaleItemDto> saleItems)
     {
         var success = await saleService.PostSaleAsync(saleItems);
-        if (success is null)
-            return NotFound();
-        if (success is false)
-            return StatusCode(StatusCodes.Status500InternalServerError);
-
-        return Created();
+        return success switch
+        {
+            null => NotFound(),
+            true => NoContent(),
+            false => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
     
     [HttpGet]
@@ -30,5 +30,17 @@ public class SalesController(ISaleService saleService) : ControllerBase
             return NotFound();
         }
         return Ok(pagedResponse);
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteSaleAsync([FromQuery] int saleId)
+    {
+        var success = await saleService.DeleteSaleByIdAsync(saleId);
+        return success switch
+        {
+            null => NotFound(),
+            true => NoContent(),
+            false => StatusCode(StatusCodes.Status500InternalServerError)
+        };
     }
 }

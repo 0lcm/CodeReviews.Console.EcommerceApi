@@ -20,4 +20,15 @@ public class SaleRepository(ApiDbContext db) : ISaleRepository
             .OrderBy(s => s.SaleId)
             .AsQueryable();
     }
+
+    public async Task<Sale?> GetSaleByIdAsync(int saleId)
+    {
+        return await db.Sales.FindAsync(saleId);
+    }
+
+    public async Task DeleteSaleAsync(Sale sale)
+    {
+        db.Sales.Remove(sale);
+        await db.SaveChangesAsync();
+    }
 }

@@ -5,5 +5,7 @@ namespace ECommerce.API.Interfaces;
 public interface ITagRepository
 {
     public Task<Tag?> GetTagByName(string name);
+    public Task<Tag?> GetTagById(int id);
     public Task PostTagAsync(Tag tag);
+    public Task DeleteTagAsync(Tag tag);
 }

@@ -15,4 +15,17 @@ public class TagController(ITagService tagService) : ControllerBase
         await tagService.PostTagAsync(tagDto);
         return Created();
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteTag([FromQuery] int tagId)
+    {
+        var success = await tagService.DeleteTagByIdAsync(tagId);
+
+        return success switch
+        {
+            null => NotFound(),
+            true => NoContent(),
+            false => StatusCode(StatusCodes.Status500InternalServerError)
+        };
+    }
 }

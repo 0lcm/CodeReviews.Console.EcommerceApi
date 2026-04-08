@@ -20,4 +20,26 @@ public class TagService(ITagRepository repo) : ITagService
 
         await repo.PostTagAsync(tag);
     }
+
+    /// <summary>
+    /// Deletes a tag asynchronously
+    /// </summary>
+    /// <returns>true upon a successful deletion, false upon an unsuccessful attempt, and null
+    /// upon a NotFound exception.</returns>
+    public async Task<bool?> DeleteTagByIdAsync(int id)
+    {
+        var tag = await repo.GetTagById(id);
+        if (tag is null)
+            return null;
+
+        try
+        {
+            await repo.DeleteTagAsync(tag);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
 }

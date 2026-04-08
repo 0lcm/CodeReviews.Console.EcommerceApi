@@ -1,11 +1,33 @@
 ﻿using ECommerce.API.Interfaces;
 using ECommerce.API.Models;
 using ECommerce.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.API.Services;
 
 public class TagService(ITagRepository repo) : ITagService
 {
+    public async Task<PagedResponse<TagDto>> GetTagsAsync(PaginationParams paginationParams)
+    {
+        var query = repo.GetTags();
+
+        if (!string.IsNullOrEmpty(paginationParams.SearchTerm))
+        {
+            query = query.Where(t => t.TagName.Contains(paginationParams.SearchTerm));
+        }
+
+        var totalRecords = await query.CountAsync();
+        var tags = await query
+            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
+            .Take(paginationParams.PageSize)
+            .Select(t => new TagDto
+            {
+                TagName = t.TagName
+            }).ToListAsync();
+        
+        return new PagedResponse<TagDto>(tags, paginationParams.PageNumber, paginationParams.PageSize, totalRecords);
+    }
+    
     public async Task PostTagAsync(CreateTagDto tagDto)
     {
         if (await repo.GetTagByName(tagDto.TagName) is not null)

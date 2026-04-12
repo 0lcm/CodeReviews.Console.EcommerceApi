@@ -8,14 +8,14 @@ namespace ECommerce.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TagController(ITagService tagService) : ControllerBase
+public class TagsController(ITagService tagService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetTags([FromQuery] PaginationParams paginationParams)
     {
         var pagedResponse = await tagService.GetTagsAsync(paginationParams);
         if (pagedResponse.TotalRecords == 0)
-            return NoContent();
+            return NotFound();
         
         return Ok(pagedResponse);
     }

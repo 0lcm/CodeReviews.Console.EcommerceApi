@@ -13,7 +13,7 @@ public class TagService(ITagRepository repo) : ITagService
 
         if (!string.IsNullOrEmpty(paginationParams.SearchTerm))
         {
-            query = query.Where(t => t.TagName.Contains(paginationParams.SearchTerm));
+            query = query.Where(t => t.TagName.ToLower().Contains(paginationParams.SearchTerm.ToLower()));
         }
 
         var totalRecords = await query.CountAsync();

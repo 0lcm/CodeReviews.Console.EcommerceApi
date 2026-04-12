@@ -37,13 +37,13 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
 
         if (!string.IsNullOrEmpty(paginationParams.SearchTerm))
         {
-            query = query.Where(i => i.Name.Contains(paginationParams.SearchTerm)
-            ||  i.Artist.Contains(paginationParams.SearchTerm));
+            query = query.Where(i => i.Name.ToLower().Contains(paginationParams.SearchTerm.ToLower())
+            ||  i.Artist.ToLower().Contains(paginationParams.SearchTerm.ToLower()));
         }
 
         if (!string.IsNullOrEmpty(paginationParams.Genre))
         {
-            query = query.Where(i => i.Genre == paginationParams.Genre);
+            query = query.Where(i => i.Genre.ToLower() == paginationParams.Genre.ToLower());
         }
         
         var totalRecords = await query.CountAsync();

@@ -1,17 +1,17 @@
-﻿namespace ECommerce.UI.UserInterface;
-
-using ECommerce.UI.Enums;
+﻿using ECommerce.UI.Enums;
 using Spectre.Console;
 using Spectre.Console.Rendering;
+
+namespace ECommerce.UI.Helpers;
 
 internal class DisplayHelper
 {
     //------- Colors -------
-    private const string White = "#f1f1f1";
-    private const string Grey = "#8c8e8f"; 
-    private const string Green = "#32aa3b";
+    internal const string White = "#f1f1f1";
+    internal const string Grey = "#8c8e8f"; 
+    internal const string Green = "#32aa3b";
     private const string Red = "#cd2d2d";
-    private const string Yellow = "#e2b929";
+    internal const string Yellow = "#e2b929";
     private const string Error = "#870c00";
 
     //------- Basic Outputs -------

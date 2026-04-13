@@ -2,8 +2,26 @@
 
 internal enum AdminMainMenu
 {
-    ManageProductsAndProductTags,
+    ManageProducts,
+    ManageProductTags,
     ManageSales,
     EnterTestingEnvironment,
     ExitApplication
+}
+
+internal enum ManageProductsMenuOption
+{
+    ReviewProducts,
+    SearchProducts,
+    CreateNewProduct,
+    EditProduct,
+    DeleteProduct,
+    Back
+}
+
+internal enum ReviewProductsMenu
+{
+    LastPage,
+    NextPage,
+    Back
 }

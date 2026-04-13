@@ -1,12 +1,22 @@
-﻿using ECommerce.UI.UserInterface;
+﻿using ECommerce.UI.AdministratorUi;
+using ECommerce.UI.Configuration;
+using ECommerce.UI.Interfaces;
+using ECommerce.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+builder.Services.AddTransient<IApiService, ApiService>();
+
+builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<ManageProductsUi>();
+
 builder.Services.AddTransient<AdministratorUi>();
 
+builder.Services.AddHttpClient(ApiSettings.BaseUrl, 
+    client => client.BaseAddress = new Uri(ApiSettings.BaseUrl));
 builder.Services.AddHostedService<Worker>();
 
 builder.Logging.SetMinimumLevel(LogLevel.Warning);

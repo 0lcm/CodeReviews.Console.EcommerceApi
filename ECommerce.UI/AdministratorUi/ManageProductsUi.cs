@@ -2,6 +2,7 @@
 using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
 using ECommerce.UI.Interfaces;
+using Spectre.Console;
 using Spectre.Console.Rendering;
 
 namespace ECommerce.UI.AdministratorUi;
@@ -22,7 +23,7 @@ internal class ManageProductsUi(IItemService productsService)
                     await ReviewProductsMenu();
                     break;
                 case ManageProductsMenuOption.SearchProducts:
-                    //TODO add a call to the search products menu
+                    await SearchProducts();
                     break;
                 case ManageProductsMenuOption.CreateNewProduct:
                     //TODO add a call to the create new product menu
@@ -40,7 +41,12 @@ internal class ManageProductsUi(IItemService productsService)
     }
     
     //------- CRUD Menus -------
-    private async Task ReviewProductsMenu()
+    /// <summary>
+    /// Presents a list of products to the user and handles pagination
+    /// </summary>
+    /// <param name="searchTerm">optional search term to filter results</param>
+    /// <param name="searchGenre">optional genre filter</param>
+    private async Task ReviewProductsMenu(string? searchTerm = null, string? searchGenre = null)
     {
         var pageNumber = 1;
         while (true)
@@ -48,7 +54,7 @@ internal class ManageProductsUi(IItemService productsService)
             try
             {
                 Console.Clear();
-                var response = await productsService.GetItemsAsync(pageNumber);
+                var response = await productsService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre);
                 var iRenderable = UiHelper.BuildItemDtoRenderable(response);
                 
                 
@@ -72,6 +78,51 @@ internal class ManageProductsUi(IItemService productsService)
                 UiHelper.DisplayCaughtException(ex);
                 return;
             }
+        }
+    }
+
+    private async Task SearchProducts()
+    {
+        while (true)
+        {
+            Console.Clear();
+            
+            List<string> enumNames = Enum.GetNames<SearchProductsMenu>().ToList();
+            var options = DisplayMultiPrompt(enumNames);
+
+            List<SearchProductsMenu> selectedFilters;
+            try
+            {
+                selectedFilters = options
+                    .Select(s => (SearchProductsMenu)Enum.Parse<SearchProductsMenu>(s))
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                DisplayWarning("Please select to either search by a given search term, or filter by genre.");
+                UiHelper.WaitForUser();
+                continue;
+            }
+
+            string? searchTerm = null;
+            string? searchGenre = null;
+
+            if (selectedFilters.Contains(SearchProductsMenu.SearchByTerm))
+            {
+                Console.Clear();
+                searchTerm = DisplayQuestion("Please enter a term to search for:");
+            }
+
+            if (selectedFilters.Contains(SearchProductsMenu.FilterByGenre))
+            {
+                Console.Clear();
+                searchGenre = DisplayQuestion("Please enter a genre to filter by:");
+            }
+
+            await ReviewProductsMenu(searchTerm, searchGenre);
+
+            if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))
+                return;
         }
     }
 }

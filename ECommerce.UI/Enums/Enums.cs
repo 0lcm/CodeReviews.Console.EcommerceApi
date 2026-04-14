@@ -25,3 +25,9 @@ internal enum ReviewProductsMenu
     NextPage,
     Back
 }
+
+internal enum SearchProductsMenu
+{
+    SearchByTerm,
+    FilterByGenre
+}

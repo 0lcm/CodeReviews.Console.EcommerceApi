@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using ECommerce.Shared;
 using ECommerce.Shared.Models;
 using ECommerce.UI.Configuration;
 using ECommerce.UI.Helpers;
@@ -16,5 +17,30 @@ public class ItemService(IApiService apiService) : IItemService
 
         var rawJson = await apiService.GetAsync(requestUrl);
         return JsonSerializer.Deserialize<PagedResponse<ItemDto>>(rawJson, Utils.GetJsonSerializerOptions())!;
+    }
+
+    public async Task PostItemAsync(ItemFormat format, ItemType type, string title, string artist, decimal price, string genre,
+        string tags)
+    {
+        List<TagDto> tagDtos = [];
+
+        var tagArray = tags.Split(',');
+        foreach (var tag in tagArray)
+        {
+            tagDtos.Add(new TagDto{TagName =  tag});
+        }
+
+        var itemDto = new CreateItemDto
+        {
+            Format = format,
+            Type = type,
+            Name = title,
+            Artist = artist,
+            Price = price,
+            Genre = genre,
+            Tags = tagDtos
+        };
+        
+        await apiService.PostAsync(ApiUris.ItemRequestUri,  itemDto);
     }
 }

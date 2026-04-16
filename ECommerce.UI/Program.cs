@@ -9,8 +9,10 @@ using Microsoft.Extensions.Logging;
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddTransient<IApiService, ApiService>();
-
 builder.Services.AddTransient<IItemService, ItemService>();
+
+builder.Services.AddTransient<IVerificationService, VerificationService>();
+
 builder.Services.AddTransient<ManageProductsUi>();
 
 builder.Services.AddTransient<AdministratorUi>();

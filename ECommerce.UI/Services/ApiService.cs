@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Reflection.Metadata;
+﻿using System.Net.Http.Json;
 using ECommerce.UI.Configuration;
 using ECommerce.UI.Interfaces;
 
@@ -13,6 +12,11 @@ public class ApiService(IHttpClientFactory clientFactory) : IApiService
     {
         return SendGetRequest(path);
     }
+
+    public Task PostAsync<T>(string path, T body)
+    {
+        return SendPostRequest(path, body);
+    }
     
 
     //------- Helper Methods -------
@@ -22,6 +26,13 @@ public class ApiService(IHttpClientFactory clientFactory) : IApiService
         var response = await client.GetAsync(path);
         
         return await HandleResponse(response);
+    }
+
+    private async Task SendPostRequest<T>(string path, T body)
+    {
+        var client = clientFactory.CreateClient(BaseUrl);
+        var response = await client.PostAsJsonAsync(path, body);
+        await HandleResponse(response);
     }
 
     private static async Task<string> HandleResponse(HttpResponseMessage response)

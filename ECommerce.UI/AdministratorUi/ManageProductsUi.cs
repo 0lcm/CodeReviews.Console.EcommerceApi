@@ -1,13 +1,16 @@
-﻿using static ECommerce.UI.Helpers.DisplayHelper;
+﻿using ECommerce.Shared;
+using ECommerce.Shared.Models;
+using static ECommerce.UI.Helpers.DisplayHelper;
 using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
 using ECommerce.UI.Interfaces;
+using ECommerce.UI.Services;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
 namespace ECommerce.UI.AdministratorUi;
 
-internal class ManageProductsUi(IItemService productsService)
+internal class ManageProductsUi(IItemService productsService, IVerificationService verificationService)
 {
     //------- Menu Methods -------
     internal async Task ManageProductsMenu()
@@ -26,10 +29,7 @@ internal class ManageProductsUi(IItemService productsService)
                     await SearchProducts();
                     break;
                 case ManageProductsMenuOption.CreateNewProduct:
-                    //TODO add a call to the create new product menu
-                    break;
-                case ManageProductsMenuOption.EditProduct:
-                    //TODO add a call to the edit product menu
+                    await CreateProduct();
                     break;
                 case ManageProductsMenuOption.DeleteProduct:
                     //TODO add a call to the delete product menu
@@ -123,6 +123,85 @@ internal class ManageProductsUi(IItemService productsService)
 
             if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))
                 return;
+        }
+    }
+
+    private async Task CreateProduct()
+    {
+        ItemFormat format;
+        ItemType type;
+        decimal price;
+        
+        var title = UiHelper.GetArgument("Please enter the item title:");
+        if (title is null) return;
+        
+        var artist = UiHelper.GetArgument("Please enter the artist's name:");
+        if (artist is null) return;
+        
+        var genre =  UiHelper.GetArgument("Please enter the genre:");
+        if (genre is null) return;
+        
+        var tags = UiHelper.GetArgument("Please enter any tags separated by commas:");
+        if (tags is null) return;
+        
+        while (true)
+        {
+            const string prompt = "Please enter an item format:";
+            const string instructions = "Valid item formats are only: Vinyl, Cd, or Digital.";
+            var itemFormat = UiHelper.GetArgument(prompt, instructions);
+            if (itemFormat is null) return;
+            
+            if (!verificationService.TryParseItemFormat(itemFormat, out format))
+            {
+                DisplayWarning("Please choose either: vinyl, cd, or digital format.");
+                UiHelper.WaitForUser();
+                continue;
+            }
+
+            break;
+        }
+        
+        while (true)
+        {
+            const string prompt = "Please enter an item type:";
+            const string instructions = "Valid item types are only: Album, Single, or Mixtape";
+            var itemType = UiHelper.GetArgument(prompt, instructions);
+            if (itemType is null) return;
+            
+            if (!verificationService.TryParseItemType(itemType, out type))
+            {
+                DisplayWarning("Please choose either: album, single, or mixtape type.");
+                UiHelper.WaitForUser();
+                continue;
+            }
+
+            break;
+        }
+
+        while (true)
+        {
+            var unparsedPrice = UiHelper.GetArgument("Please enter the item's price:");
+            if (unparsedPrice is null) return;
+
+            if (!verificationService.TryParseDecimal(unparsedPrice, out price))
+            {
+                DisplayWarning("Please enter a valid number.");
+                UiHelper.WaitForUser();
+                continue;
+            }
+
+            break;
+        }
+
+        try
+        {
+            await productsService.PostItemAsync(format, type, title, artist, price, genre, tags);
+            DisplaySuccess("Successfully created product.");
+            UiHelper.WaitForUser();
+        }
+        catch (HttpRequestException ex)
+        {
+            UiHelper.DisplayCaughtException(ex);
         }
     }
 }

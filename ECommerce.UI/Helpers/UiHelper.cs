@@ -25,6 +25,13 @@ internal static class UiHelper
         return iRenderable;
     }
 
+    /// <summary>
+    /// Displays a caught exception to the user based on the type of exception caught.
+    /// Handles HttpResponseExceptions for status codes 404, 400-499, and 500+.
+    /// Handles ArgumentNull and generic Argument exceptions.
+    /// All other exceptions are labelled with a generic 'unexpected exception' label.
+    /// </summary>
+    /// <param name="ex">Caught exception</param>
     internal static void DisplayCaughtException(Exception ex)
     {
         Console.Clear();
@@ -74,5 +81,24 @@ internal static class UiHelper
     {
         DisplayMessage("Please press enter to continue.");
         Console.ReadLine();
+    }
+
+    /// <summary>
+    /// Gets an argument from the user
+    /// </summary>
+    /// <param name="prompt">Display prompt shown when prompting the user</param>
+    /// <param name="instructions">Any extra instructions, E.G asking for a specific format.</param>
+    /// <returns>null if the user wishes to exit the process, or else the value returned form the prompt.</returns>
+    internal static string? GetArgument(string prompt, string? instructions = null)
+    {
+        const string backOption = "back";
+        
+        Console.Clear();
+        DisplayInfo("Enter 'Back' to leave this menu.");
+        if (instructions != null) DisplayInfo(instructions);
+
+        var value = DisplayQuestion(prompt);
+        
+        return string.Equals(value, backOption, StringComparison.OrdinalIgnoreCase) ? null : value;
     }
 }

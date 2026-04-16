@@ -14,7 +14,6 @@ internal enum ManageProductsMenuOption
     ReviewProducts,
     SearchProducts,
     CreateNewProduct,
-    EditProduct,
     DeleteProduct,
     Back
 }

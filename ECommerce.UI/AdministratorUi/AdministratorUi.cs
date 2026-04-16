@@ -42,7 +42,7 @@ internal class AdministratorUi(ManageProductsUi manageProductsUi)
                 //TODO add a call to the test UI's main menu
                 break;
             case AdminMainMenu.ExitApplication:
-                     ExitApplication();
+                ExitApplication();
                 break;
         }
     }

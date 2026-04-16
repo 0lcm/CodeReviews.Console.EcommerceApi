@@ -348,6 +348,135 @@
 					]
 				},
 				{
+					"name": "Get Item By ID",
+					"id": "4ff80a25-4a50-4faa-a9ac-2a49504b7fef",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/Items/:id",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"Items",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Gets a specific item by an item ID. Expects a 200 OK containing the item, or a 404 NotFound response."
+					},
+					"response": [
+						{
+							"id": "de509c46-b4a1-4165-b26b-1daf677455f2",
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/Items/:id",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"Items",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": ":status",
+									"value": 200
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "date",
+									"value": "Thu, 16 Apr 2026 07:54:48 GMT"
+								},
+								{
+									"key": "server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\n    \"itemId\": 0,\n    \"format\": \"Vinyl\",\n    \"type\": \"Album\",\n    \"name\": \"Good Kid, m.A.A.d City (10th Anniversary Edition)\",\n    \"artist\": \"Kendrick Lamar\",\n    \"price\": 38,\n    \"genre\": \"Hip-Hop\",\n    \"tags\": [\n        {\n            \"tagName\": \"West Coast hip-hop\"\n        },\n        {\n            \"tagName\": \"Conscious rap\"\n        }\n    ]\n}"
+						},
+						{
+							"id": "2bca7fe6-b00c-4748-b034-4cd2cab4c1c0",
+							"name": "404 NotFound",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/Items/:id",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"Items",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "999"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": ":status",
+									"value": 404
+								},
+								{
+									"key": "content-type",
+									"value": "application/problem+json; charset=utf-8"
+								},
+								{
+									"key": "date",
+									"value": "Thu, 16 Apr 2026 07:55:07 GMT"
+								},
+								{
+									"key": "server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-8f0cd1cfe1d341dba36e132074e81f2f-b60512301a66d50e-00\"\n}"
+						}
+					]
+				},
+				{
 					"name": "Post Item",
 					"id": "88dbe39a-d005-4ada-9125-9a66395b4537",
 					"protocolProfileBehavior": {
@@ -579,18 +708,6 @@
 							"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-eb94af766084d0a5ba64867726d8e649-982eeb7757d8f8f2-00\"\n}"
 						}
 					]
-				},
-				{
-					"name": "Get Item By ID",
-					"id": "4ff80a25-4a50-4faa-a9ac-2a49504b7fef",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
 				}
 			],
 			"id": "df95d7aa-d9a0-499a-9d86-233203865d48",

@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using ECommerce.Shared.Models;
 using ECommerce.UI.Configuration;
 using ECommerce.UI.Interfaces;
 
@@ -12,12 +13,18 @@ public class ApiService(IHttpClientFactory clientFactory) : IApiService
     {
         return SendGetRequest(path);
     }
+    
 
     public Task PostAsync<T>(string path, T body)
     {
         return SendPostRequest(path, body);
     }
-    
+
+    public async Task DeleteAsync(string path)
+    {
+        await SendDeleteRequest(path);
+    }
+
 
     //------- Helper Methods -------
     private async Task<string> SendGetRequest(string path)
@@ -32,6 +39,14 @@ public class ApiService(IHttpClientFactory clientFactory) : IApiService
     {
         var client = clientFactory.CreateClient(BaseUrl);
         var response = await client.PostAsJsonAsync(path, body);
+        await HandleResponse(response);
+    }
+
+    private async Task SendDeleteRequest(string path)
+    {
+        var client = clientFactory.CreateClient(BaseUrl);
+        var response = await client.DeleteAsync(path);
+        
         await HandleResponse(response);
     }
 

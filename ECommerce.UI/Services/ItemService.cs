@@ -19,7 +19,20 @@ public class ItemService(IApiService apiService) : IItemService
         return JsonSerializer.Deserialize<PagedResponse<ItemDto>>(rawJson, Utils.GetJsonSerializerOptions())!;
     }
 
+    public async Task<ItemDto> GetItemByIdAsync(int id)
+    {
+        var rawJson = await apiService.GetAsync(ApiUris.ItemRequestUri + id);
+
+        return JsonSerializer.Deserialize<ItemDto>(rawJson, Utils.GetJsonSerializerOptions())!;
+    }
+
+    public async Task DeleteItemAsync(int id)
+    {
+        await apiService.DeleteAsync($"{ApiUris.ItemRequestUri}/{id}");
+    }
+
     public async Task PostItemAsync(ItemFormat format, ItemType type, string title, string artist, decimal price, string genre,
+        
         string tags)
     {
         List<TagDto> tagDtos = [];

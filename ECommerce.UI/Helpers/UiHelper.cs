@@ -46,8 +46,8 @@ internal static class UiHelper
                     break;
                 
                 case var code when code is >= 400 and < 500:
-                    DisplayWarning("A client side error has occurred while processing your request," +
-                                   "please  check that you are good request to the API containing valid details. | 4xx");
+                    DisplayWarning("A client side error has occurred while processing your request, " +
+                                   "please check that you are sending a good request to the API containing valid details. | 4xx");
                     break;
                 
                 case var code when code is > 500:

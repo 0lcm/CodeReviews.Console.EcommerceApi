@@ -7,6 +7,9 @@ public interface IItemService
 {
     public Task<PagedResponse<ItemDto>> GetItemsAsync(int pageNumber = 1, int pageSize = 10, 
         string?  searchTerm = null, string? searchGenre = null);
+    
+    public Task<ItemDto> GetItemByIdAsync(int id);
+    public Task DeleteItemAsync(int id);
 
     /// <summary>
     /// Posts an item asynchronously.

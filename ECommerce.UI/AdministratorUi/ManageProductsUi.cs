@@ -1,4 +1,5 @@
-﻿using ECommerce.Shared;
+﻿using System.Net;
+using ECommerce.Shared;
 using ECommerce.Shared.Models;
 using static ECommerce.UI.Helpers.DisplayHelper;
 using ECommerce.UI.Enums;
@@ -32,7 +33,7 @@ internal class ManageProductsUi(IItemService productsService, IVerificationServi
                     await CreateProduct();
                     break;
                 case ManageProductsMenuOption.DeleteProduct:
-                    //TODO add a call to the delete product menu
+                    await DeleteProduct();
                     break;
                 case ManageProductsMenuOption.Back:
                     return;
@@ -202,6 +203,44 @@ internal class ManageProductsUi(IItemService productsService, IVerificationServi
         catch (HttpRequestException ex)
         {
             UiHelper.DisplayCaughtException(ex);
+        }
+    }
+
+    private async Task DeleteProduct()
+    {
+        while (true)
+        { 
+            int id;
+            try
+            {
+                var unparsedId = UiHelper.GetArgument("Please enter the ID of the product to delete:");
+                if (string.IsNullOrWhiteSpace(unparsedId)) throw new ArgumentNullException();
+                
+                var success = int.TryParse(unparsedId, out id);
+                if (!success)
+                {
+                    DisplayWarning("Please enter a valid product ID containing only numbers.");
+                    UiHelper.WaitForUser();
+                    continue;
+                }
+
+                if (await AnsiConsole.ConfirmAsync($"Are you sure you want to delete this item?"))
+                {
+                    await productsService.DeleteItemAsync(id);
+                    DisplaySuccess("Successfully deleted product.");
+                }
+                else
+                {
+                    DisplaySuccess("Deletion was cancelled..");
+                }
+                
+                UiHelper.WaitForUser();
+            }
+            catch (Exception ex)
+            {
+                UiHelper.DisplayCaughtException(ex);
+                return;
+            }
         }
     }
 }

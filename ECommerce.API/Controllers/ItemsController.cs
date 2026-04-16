@@ -27,10 +27,18 @@ public class ItemsController(IItemService itemService) : ControllerBase
         return Ok(pagedResponse);
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> DeleteItemAsync([FromQuery] int itemId)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<ItemDto>> GetItemByIdAsync(int id)
     {
-        var success = await itemService.DeleteItemByIdAsync(itemId);
+        var itemDto = await itemService.GetItemByIdAsync(id);
+        
+        return itemDto is null ? NotFound() : Ok(itemDto);
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteItemAsync(int id)
+    {
+        var success = await itemService.DeleteItemByIdAsync(id);
         if (success is null)
             return NotFound();
         if (success is false)

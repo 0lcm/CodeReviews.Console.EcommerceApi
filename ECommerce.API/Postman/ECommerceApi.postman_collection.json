@@ -1218,7 +1218,26 @@
 					},
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/Items/:name",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"Items",
+								":name"
+							],
+							"variable": [
+								{
+									"key": "name",
+									"value": "",
+									"description": "The name of the tag for which to get the ID"
+								}
+							]
+						},
+						"description": "Returns a tag's ID value after searching the database for the tag via the tag name, passed through as a parameter. Expects a 200 OK containing the ID value, or a 404 NotFound response status code."
 					},
 					"response": []
 				}

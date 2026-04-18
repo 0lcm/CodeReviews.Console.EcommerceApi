@@ -61,16 +61,16 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                 
                 DisplayRows(iRenderable);
             
-                var option = DisplayMenu<PaginationControlMenu>();
+                var option = DisplayMenu<PaginationController>();
                 switch (option)
                 {
-                    case PaginationControlMenu.LastPage:
+                    case PaginationController.LastPage:
                         pageNumber = pageNumber == 1 ? 1 :  pageNumber - 1;
                         break;
-                    case PaginationControlMenu.NextPage:
+                    case PaginationController.NextPage:
                         pageNumber += 1;
                         break;
-                    case PaginationControlMenu.Back:
+                    case PaginationController.Back:
                         return;
                 }
             }
@@ -88,14 +88,14 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
         {
             Console.Clear();
             
-            List<string> enumNames = Enum.GetNames<SearchProductsMenu>().ToList();
+            List<string> enumNames = Enum.GetNames<SearchController>().ToList();
             var options = DisplayMultiPrompt(enumNames);
 
-            List<SearchProductsMenu> selectedFilters;
+            List<SearchController> selectedFilters;
             try
             {
                 selectedFilters = options
-                    .Select(s => (SearchProductsMenu)Enum.Parse<SearchProductsMenu>(s))
+                    .Select(s => (SearchController)Enum.Parse<SearchController>(s))
                     .ToList();
             }
             catch (Exception ex)
@@ -108,13 +108,13 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
             string? searchTerm = null;
             string? searchGenre = null;
 
-            if (selectedFilters.Contains(SearchProductsMenu.SearchByTerm))
+            if (selectedFilters.Contains(SearchController.SearchByTerm))
             {
                 Console.Clear();
                 searchTerm = DisplayQuestion("Please enter a term to search for:");
             }
 
-            if (selectedFilters.Contains(SearchProductsMenu.FilterByGenre))
+            if (selectedFilters.Contains(SearchController.FilterByGenre))
             {
                 Console.Clear();
                 searchGenre = DisplayQuestion("Please enter a genre to filter by:");

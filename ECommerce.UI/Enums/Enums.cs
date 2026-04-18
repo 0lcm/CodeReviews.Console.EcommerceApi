@@ -18,14 +18,14 @@ internal enum ManageProductsMenuOption
     Back
 }
 
-internal enum PaginationControlMenu
+internal enum PaginationController
 {
     LastPage,
     NextPage,
     Back
 }
 
-internal enum SearchProductsMenu
+internal enum SearchController
 {
     SearchByTerm,
     FilterByGenre

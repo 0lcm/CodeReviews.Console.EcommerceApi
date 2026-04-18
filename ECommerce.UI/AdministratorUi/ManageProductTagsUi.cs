@@ -2,12 +2,13 @@
 using ECommerce.UI.Enums;
 using ECommerce.UI.Interfaces;
 using ECommerce.UI.Helpers;
+using Spectre.Console;
 
 namespace ECommerce.UI.AdministratorUi;
 
 internal class ManageProductTagsUi(ITagService tagService)
 {
-    private readonly UiHelper _uiHelper = new UiHelper(tagService);
+    private readonly UiHelper _uiHelper = new(tagService);
     
     //------- Menu Methods -------
     internal async Task ManageProductTags()
@@ -24,7 +25,7 @@ internal class ManageProductTagsUi(ITagService tagService)
                     await ReviewTags();
                     break;
                 case ManageProductTagsMenu.SearchTags:
-                    //TODO add a call to search tags
+                    await SearchTags();
                     break;
                 case ManageProductTagsMenu.CreateNewTag:
                     //TODO add a call to create tag
@@ -43,8 +44,7 @@ internal class ManageProductTagsUi(ITagService tagService)
     /// Presents a list of tags to the user and handles pagination
     /// </summary>
     /// <param name="searchTerm">optional search term to filter results</param>
-    /// <param name="searchGenre">optional genre filter</param>
-    private async Task ReviewTags(string? searchTerm = null, string? searchGenre = null)
+    private async Task ReviewTags(string? searchTerm = null)
     {
         var pageNumber = 1;
         while (true)
@@ -52,22 +52,22 @@ internal class ManageProductTagsUi(ITagService tagService)
             try
             {
                 Console.Clear();
-                var response = await tagService.GetTagsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre);
+                var response = await tagService.GetTagsAsync(pageNumber, searchTerm: searchTerm);
                 var iRenderable = _uiHelper.BuildTagDtoRenderable(response);
                 
                 
                 DisplayRows(iRenderable);
             
-                var option = DisplayMenu<PaginationControlMenu>();
+                var option = DisplayMenu<PaginationController>();
                 switch (option)
                 {
-                    case PaginationControlMenu.LastPage:
+                    case PaginationController.LastPage:
                         pageNumber = pageNumber == 1 ? 1 :  pageNumber - 1;
                         break;
-                    case PaginationControlMenu.NextPage:
+                    case PaginationController.NextPage:
                         pageNumber += 1;
                         break;
-                    case PaginationControlMenu.Back:
+                    case PaginationController.Back:
                         return;
                 }
             }
@@ -76,6 +76,22 @@ internal class ManageProductTagsUi(ITagService tagService)
                 UiHelper.DisplayCaughtException(ex);
                 return;
             }
+        }
+    }
+    
+    private async Task SearchTags()
+    {
+        while (true)
+        {
+            Console.Clear();
+    
+            var searchTerm = UiHelper.GetArgument("Please enter a term to search by:");
+            if (searchTerm is null) return;
+            
+            await ReviewTags(searchTerm);
+    
+            if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))
+                return;
         }
     }
 }

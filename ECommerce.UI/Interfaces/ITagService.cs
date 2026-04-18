@@ -6,6 +6,6 @@ public interface ITagService
 {
     
     public Task<PagedResponse<TagDto>> GetTagsAsync(int pageNumber = 1, int pageSize = 10, 
-        string?  searchTerm = null, string? searchGenre = null);
+        string?  searchTerm = null);
     public Task<int> GetTagIdByNameAsync(string tagName);
 }

@@ -8,10 +8,10 @@ namespace ECommerce.UI.Services;
 
 public class TagService(IApiService apiService) : ITagService
 {
-    public async Task<PagedResponse<TagDto>> GetTagsAsync(int pageNumber = 1, int pageSize = 10, string? searchTerm = null, string? searchGenre = null)
+    public async Task<PagedResponse<TagDto>> GetTagsAsync(int pageNumber = 1, int pageSize = 10, string? searchTerm = null)
     {
         var requestUrl = Utils.FormatQueryWithPaginationParams(baseUrl: ApiUris.TagRequestUri,
-            pageNumber, pageSize, searchTerm, searchGenre);
+            pageNumber, pageSize, searchTerm, null);
 
         var rawJson = await apiService.GetAsync(requestUrl);
         return JsonSerializer.Deserialize<PagedResponse<TagDto>>(rawJson, Utils.GetJsonSerializerOptions())!;

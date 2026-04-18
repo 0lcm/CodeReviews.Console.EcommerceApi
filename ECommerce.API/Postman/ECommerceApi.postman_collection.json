@@ -1220,13 +1220,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BaseUrl}}/api/Items/:name",
+							"raw": "{{BaseUrl}}/api/tags/:name",
 							"host": [
 								"{{BaseUrl}}"
 							],
 							"path": [
 								"api",
-								"Items",
+								"tags",
 								":name"
 							],
 							"variable": [
@@ -1239,7 +1239,108 @@
 						},
 						"description": "Returns a tag's ID value after searching the database for the tag via the tag name, passed through as a parameter. Expects a 200 OK containing the ID value, or a 404 NotFound response status code."
 					},
-					"response": []
+					"response": [
+						{
+							"id": "e4104432-9171-4fc9-996f-216d2e09b4bd",
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/tags/:name",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"tags",
+										":name"
+									],
+									"variable": [
+										{
+											"key": "name",
+											"value": "Heartbreak",
+											"description": "The name of the tag for which to get the ID"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": ":status",
+									"value": 200
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "date",
+									"value": "Sat, 18 Apr 2026 15:43:23 GMT"
+								},
+								{
+									"key": "server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"responseTime": null,
+							"body": "4"
+						},
+						{
+							"id": "ab6ed250-2604-4435-a691-283653fe1bcd",
+							"name": "404 NotFound",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/tags/:name",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"tags",
+										":name"
+									],
+									"variable": [
+										{
+											"key": "name",
+											"value": "unknown value",
+											"description": "The name of the tag for which to get the ID"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": ":status",
+									"value": 404
+								},
+								{
+									"key": "content-type",
+									"value": "application/problem+json; charset=utf-8"
+								},
+								{
+									"key": "date",
+									"value": "Sat, 18 Apr 2026 15:43:47 GMT"
+								},
+								{
+									"key": "server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-7b313b2048c3221dcd548b7e2ec28311-1badc791e401cf13-00\"\n}"
+						}
+					]
 				}
 			],
 			"id": "3716f07a-32c1-481e-9912-d6251ea9a220",

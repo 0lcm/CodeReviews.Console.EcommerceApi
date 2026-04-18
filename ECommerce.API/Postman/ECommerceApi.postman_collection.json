@@ -1209,6 +1209,18 @@
 							"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-9c3083fff5c2c32cf95fd81b820045b1-47ceee857c01f3fe-00\"\n}"
 						}
 					]
+				},
+				{
+					"name": "Get Tag ID",
+					"id": "f38e4fc0-6e1b-4be2-8e8e-f88e36905c19",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
 			],
 			"id": "3716f07a-32c1-481e-9912-d6251ea9a220",

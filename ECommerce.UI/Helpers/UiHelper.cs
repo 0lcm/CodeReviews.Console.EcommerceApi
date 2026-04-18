@@ -1,11 +1,12 @@
 ﻿using ECommerce.Shared.Models;
+using ECommerce.UI.Interfaces;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using static ECommerce.UI.Helpers.DisplayHelper;
 
 namespace ECommerce.UI.Helpers;
 
-internal static class UiHelper
+internal class UiHelper(ITagService tagService)
 {
     internal static List<IRenderable> BuildItemDtoRenderable(PagedResponse<ItemDto> response)
     {
@@ -17,9 +18,22 @@ internal static class UiHelper
             iRenderable.Add(new Markup($"[{White}]Artist: [/][{Grey}]{item.Artist}[/]"));
             iRenderable.Add(new Markup($"[{White}]Type / Format: [/][{Grey}]{item.Type} / {item.Format}[/]"));
             iRenderable.Add(new Markup($"[{White}]Genre: [/][{Grey}]{item.Genre}[/]"));
-            iRenderable.Add(new Markup($"[{White}]Item ID: [/][{Grey}]{string.Join(", ", item.Tags.Select(t => t.TagName))}[/]"));
+            iRenderable.Add(new Markup($"[{White}]Tags: [/][{Grey}]{string.Join(", ", item.Tags.Select(t => t.TagName))}[/]"));
             iRenderable.Add(new Markup($"[{White}]Price: [/][{Grey}]{item.Price}[/]"));
             iRenderable.Add(new Markup($"[{White}]Item ID: [/][{Yellow}]{item.ItemId}[/]"));
+        }
+        
+        return iRenderable;
+    }
+    internal List<IRenderable> BuildTagDtoRenderable(PagedResponse<TagDto> response)
+    {
+        List<IRenderable> iRenderable = [];
+
+        foreach (var tag in response.Data)
+        {
+            var tagId = tagService.GetTagIdByNameAsync(tag.TagName).Result;
+            iRenderable.Add(new Markup($"[{White}]\nTag ID: [/][{Green}]{tagId}[/]"));
+            iRenderable.Add(new Markup($"[{White}]Title: [/][{Grey}]{tag.TagName}[/]"));
         }
         
         return iRenderable;

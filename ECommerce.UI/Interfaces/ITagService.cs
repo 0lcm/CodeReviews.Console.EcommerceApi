@@ -1,0 +1,11 @@
+﻿using ECommerce.Shared.Models;
+
+namespace ECommerce.UI.Interfaces;
+
+public interface ITagService
+{
+    
+    public Task<PagedResponse<TagDto>> GetTagsAsync(int pageNumber = 1, int pageSize = 10, 
+        string?  searchTerm = null, string? searchGenre = null);
+    public Task<int> GetTagIdByNameAsync(string tagName);
+}

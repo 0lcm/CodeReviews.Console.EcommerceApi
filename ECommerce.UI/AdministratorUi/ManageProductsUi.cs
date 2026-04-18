@@ -11,7 +11,7 @@ using Spectre.Console.Rendering;
 
 namespace ECommerce.UI.AdministratorUi;
 
-internal class ManageProductsUi(IItemService productsService, IVerificationService verificationService)
+internal class ManageProductsUi(IItemService itemService, IVerificationService verificationService)
 {
     //------- Menu Methods -------
     internal async Task ManageProductsMenu()
@@ -55,22 +55,22 @@ internal class ManageProductsUi(IItemService productsService, IVerificationServi
             try
             {
                 Console.Clear();
-                var response = await productsService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre);
+                var response = await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre);
                 var iRenderable = UiHelper.BuildItemDtoRenderable(response);
                 
                 
                 DisplayRows(iRenderable);
             
-                var option = DisplayMenu<Enums.ReviewProductsMenu>();
+                var option = DisplayMenu<PaginationControlMenu>();
                 switch (option)
                 {
-                    case Enums.ReviewProductsMenu.LastPage:
+                    case PaginationControlMenu.LastPage:
                         pageNumber = pageNumber == 1 ? 1 :  pageNumber - 1;
                         break;
-                    case Enums.ReviewProductsMenu.NextPage:
+                    case PaginationControlMenu.NextPage:
                         pageNumber += 1;
                         break;
-                    case Enums.ReviewProductsMenu.Back:
+                    case PaginationControlMenu.Back:
                         return;
                 }
             }
@@ -196,7 +196,7 @@ internal class ManageProductsUi(IItemService productsService, IVerificationServi
 
         try
         {
-            await productsService.PostItemAsync(format, type, title, artist, price, genre, tags);
+            await itemService.PostItemAsync(format, type, title, artist, price, genre, tags);
             DisplaySuccess("Successfully created product.");
             UiHelper.WaitForUser();
         }
@@ -226,7 +226,7 @@ internal class ManageProductsUi(IItemService productsService, IVerificationServi
 
                 if (await AnsiConsole.ConfirmAsync($"Are you sure you want to delete this item?"))
                 {
-                    await productsService.DeleteItemAsync(id);
+                    await itemService.DeleteItemAsync(id);
                     DisplaySuccess("Successfully deleted product.");
                 }
                 else

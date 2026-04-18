@@ -1,11 +1,10 @@
 ﻿using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
-using Microsoft.Extensions.Hosting;
 using static ECommerce.UI.Helpers.DisplayHelper;
 
 namespace ECommerce.UI.AdministratorUi;
 
-internal class AdministratorUi(ManageProductsUi manageProductsUi)
+internal class AdministratorUi(ManageProductsUi manageProductsUi, ManageProductTagsUi manageProductTagsUi)
 {
     //------- Main Menu Methods -------
     internal async Task MainMenu()
@@ -33,7 +32,7 @@ internal class AdministratorUi(ManageProductsUi manageProductsUi)
                 await manageProductsUi.ManageProductsMenu();
                 break;
             case  AdminMainMenu.ManageProductTags:
-                //TODO add a call to the Manage product tags menu
+                await manageProductTagsUi.ManageProductTags();
                 break;
             case AdminMainMenu.ManageSales:
                 //TODO add a call to the manage sales menu

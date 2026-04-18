@@ -19,6 +19,17 @@ public class TagsController(ITagService tagService) : ControllerBase
         
         return Ok(pagedResponse);
     }
+
+    [HttpGet("{name}")]
+    public async Task<ActionResult<int>> GetTagId(string name)
+    {
+        var tag = await tagService.GetTagIdByName(name);
+        return tag switch
+        {
+            null => NotFound(),
+            _ => Ok(tag)
+        };
+    }
     
     [HttpPost]
     public async Task<IActionResult> PostTag([FromBody] CreateTagDto tagDto)

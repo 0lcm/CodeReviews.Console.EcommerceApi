@@ -10,10 +10,12 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddTransient<IApiService, ApiService>();
 builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<ITagService, TagService>();
 
 builder.Services.AddTransient<IVerificationService, VerificationService>();
 
 builder.Services.AddTransient<ManageProductsUi>();
+builder.Services.AddTransient<ManageProductTagsUi>();
 
 builder.Services.AddTransient<AdministratorUi>();
 

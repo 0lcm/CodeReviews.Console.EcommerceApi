@@ -18,7 +18,7 @@ internal enum ManageProductsMenuOption
     Back
 }
 
-internal enum ReviewProductsMenu
+internal enum PaginationControlMenu
 {
     LastPage,
     NextPage,
@@ -29,4 +29,13 @@ internal enum SearchProductsMenu
 {
     SearchByTerm,
     FilterByGenre
+}
+
+internal enum ManageProductTagsMenu
+{
+    ReviewTags,
+    SearchTags,
+    CreateNewTag,
+    DeleteTag,
+    Back
 }

@@ -34,4 +34,9 @@ public class TagService(IApiService apiService) : ITagService
         
         await apiService.PostAsync(ApiUris.TagRequestUri, tagDto);
     }
+
+    public async Task DeleteTagAsync(int tagId)
+    {
+        await apiService.DeleteAsync($"{ApiUris.TagRequestUri}/{tagId}");
+    }
 }

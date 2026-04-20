@@ -38,8 +38,8 @@ public class TagsController(ITagService tagService) : ControllerBase
         return Created();
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> DeleteTag([FromQuery] int tagId)
+    [HttpDelete("{tagId:int}")]
+    public async Task<IActionResult> DeleteTag(int tagId)
     {
         var success = await tagService.DeleteTagByIdAsync(tagId);
 

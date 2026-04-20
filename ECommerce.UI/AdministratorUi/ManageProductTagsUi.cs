@@ -31,7 +31,7 @@ internal class ManageProductTagsUi(ITagService tagService)
                     await CreateNewTag();
                     break;
                 case ManageProductTagsMenu.DeleteTag:
-                    //TODO add a call to delete tag
+                    await DeleteTag();
                     break;
                 case ManageProductTagsMenu.Back:
                     return;
@@ -109,6 +109,38 @@ internal class ManageProductTagsUi(ITagService tagService)
             {
                 await tagService.PostTagAsync(name);
                 DisplaySuccess("Successfully  created a new tag");
+                UiHelper.WaitForUser();
+            }
+            catch (HttpRequestException ex)
+            {
+                UiHelper.DisplayCaughtException(ex);
+            }
+
+            return;
+        }
+    }
+
+    private async Task DeleteTag()
+    {
+        while (true)
+        {
+            var id = UiHelper.GetArgument("Please enter the ID of the tag you want to delete:");
+            if (id is null) return;
+
+            if (!int.TryParse(id, out var parsedId))
+            {
+                DisplayWarning("Please enter a valid ID containing only numbers.");
+                UiHelper.WaitForUser();
+                continue;
+            }
+
+            if (!await AnsiConsole.ConfirmAsync($"Are you sure you want to delete the tag ID {id}?"))
+                continue;
+
+            try
+            {
+                await tagService.DeleteTagAsync(parsedId);
+                DisplaySuccess("Successfully deleted tag.");
                 UiHelper.WaitForUser();
             }
             catch (HttpRequestException ex)

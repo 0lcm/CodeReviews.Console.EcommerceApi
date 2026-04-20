@@ -38,6 +38,20 @@ internal class UiHelper(ITagService tagService)
         
         return iRenderable;
     }
+    
+    internal static List<IRenderable> BuildSaleDtoRenderable(PagedResponse<SaleDto> response)
+    {
+        List<IRenderable> iRenderable = [];
+
+        foreach (var sale in response.Data)
+        {
+            iRenderable.Add(new Markup($"[{White}]\nID: [/][{Green}]{sale.SaleId}[/]"));
+            iRenderable.Add(new Markup($"[{White}]Items: [/][{Grey}]{string.Join(',', sale.SoldItems.Select(s => $"{s.Item.Name} x{s.Quantity}"))}[/]"));
+            iRenderable.Add(new Markup($"[{White}]Total price: [/][{Grey}]{sale.TotalPrice}[/]"));
+        }
+        
+        return iRenderable;
+    }
 
     /// <summary>
     /// Displays a caught exception to the user based on the type of exception caught.

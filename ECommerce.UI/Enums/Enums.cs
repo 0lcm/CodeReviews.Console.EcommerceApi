@@ -39,3 +39,11 @@ internal enum ManageProductTagsMenu
     DeleteTag,
     Back
 }
+
+internal enum ManageSalesMenu
+{
+    ReviewSales,
+    CreateNewSale,
+    DeleteSale,
+    Back
+}

@@ -1095,19 +1095,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{BaseUrl}}/api/Tags?tagId=",
+							"raw": "{{BaseUrl}}/api/Tags/:id",
 							"host": [
 								"{{BaseUrl}}"
 							],
 							"path": [
 								"api",
-								"Tags"
+								"Tags",
+								":id"
 							],
-							"query": [
+							"variable": [
 								{
-									"key": "tagId",
-									"value": "",
-									"description": "Decides the tag to delete."
+									"key": "id",
+									"value": ""
 								}
 							]
 						},
@@ -1115,25 +1115,25 @@
 					},
 					"response": [
 						{
-							"id": "f5f8a67d-b59c-4295-8045-c4514f35df69",
+							"id": "40e36275-1227-4764-a701-9e6b9c5dc266",
 							"name": "204 NoContent",
 							"originalRequest": {
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{BaseUrl}}/api/Tags?tagId=9",
+									"raw": "{{BaseUrl}}/api/Tags/:id",
 									"host": [
 										"{{BaseUrl}}"
 									],
 									"path": [
 										"api",
-										"Tags"
+										"Tags",
+										":id"
 									],
-									"query": [
+									"variable": [
 										{
-											"key": "tagId",
-											"value": "9",
-											"description": "Decides the tag to delete."
+											"key": "id",
+											"value": "13"
 										}
 									]
 								}
@@ -1148,7 +1148,7 @@
 								},
 								{
 									"key": "date",
-									"value": "Fri, 10 Apr 2026 00:31:09 GMT"
+									"value": "Mon, 20 Apr 2026 11:02:55 GMT"
 								},
 								{
 									"key": "server",
@@ -1160,25 +1160,25 @@
 							"body": null
 						},
 						{
-							"id": "f4d39b25-a258-402d-bd2d-4c248118a84b",
+							"id": "4e407965-00d3-429f-b937-606730a74e31",
 							"name": "404 NotFound",
 							"originalRequest": {
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{BaseUrl}}/api/Tags?tagId=999",
+									"raw": "{{BaseUrl}}/api/Tags/:id",
 									"host": [
 										"{{BaseUrl}}"
 									],
 									"path": [
 										"api",
-										"Tags"
+										"Tags",
+										":id"
 									],
-									"query": [
+									"variable": [
 										{
-											"key": "tagId",
-											"value": "999",
-											"description": "Decides the tag to delete."
+											"key": "id",
+											"value": "999"
 										}
 									]
 								}
@@ -1197,7 +1197,7 @@
 								},
 								{
 									"key": "date",
-									"value": "Fri, 10 Apr 2026 00:31:29 GMT"
+									"value": "Mon, 20 Apr 2026 11:03:11 GMT"
 								},
 								{
 									"key": "server",
@@ -1206,7 +1206,7 @@
 							],
 							"cookie": [],
 							"responseTime": null,
-							"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-9c3083fff5c2c32cf95fd81b820045b1-47ceee857c01f3fe-00\"\n}"
+							"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-d2b8b0df0ddab0649ac8a20aac9cd83f-4e0370a2b8aa0df3-00\"\n}"
 						}
 					]
 				},

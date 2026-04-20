@@ -594,19 +594,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{BaseUrl}}/api/Items?itemId=",
+							"raw": "{{BaseUrl}}/api/Items/:id",
 							"host": [
 								"{{BaseUrl}}"
 							],
 							"path": [
 								"api",
-								"Items"
+								"Items",
+								":id"
 							],
-							"query": [
+							"variable": [
 								{
-									"key": "itemId",
-									"value": "",
-									"description": "Dictates which item will be deleted"
+									"key": "id",
+									"value": ""
 								}
 							]
 						},
@@ -614,25 +614,25 @@
 					},
 					"response": [
 						{
-							"id": "f4c7f875-435f-4bb3-8d73-c6fb25b7bb32",
+							"id": "ebcd9e84-d6e1-4aba-9179-8e1a2a5a025b",
 							"name": "204 NoContent",
 							"originalRequest": {
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{BaseUrl}}/api/Items?itemId=3",
+									"raw": "{{BaseUrl}}/api/Items/:id",
 									"host": [
 										"{{BaseUrl}}"
 									],
 									"path": [
 										"api",
-										"Items"
+										"Items",
+										":id"
 									],
-									"query": [
+									"variable": [
 										{
-											"key": "itemId",
-											"value": "3",
-											"description": "Dictates which item will be deleted"
+											"key": "id",
+											"value": "5"
 										}
 									]
 								}
@@ -647,7 +647,7 @@
 								},
 								{
 									"key": "date",
-									"value": "Fri, 10 Apr 2026 00:08:06 GMT"
+									"value": "Mon, 20 Apr 2026 10:42:08 GMT"
 								},
 								{
 									"key": "server",
@@ -659,25 +659,25 @@
 							"body": null
 						},
 						{
-							"id": "43756682-ebaf-4145-91f8-0bab533edf9d",
+							"id": "399f1977-6902-4957-865c-128e4777f64d",
 							"name": "404 NotFound",
 							"originalRequest": {
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{BaseUrl}}/api/Items?itemId=999",
+									"raw": "{{BaseUrl}}/api/Items/:id",
 									"host": [
 										"{{BaseUrl}}"
 									],
 									"path": [
 										"api",
-										"Items"
+										"Items",
+										":id"
 									],
-									"query": [
+									"variable": [
 										{
-											"key": "itemId",
-											"value": "999",
-											"description": "Dictates which item will be deleted"
+											"key": "id",
+											"value": "999"
 										}
 									]
 								}
@@ -696,7 +696,7 @@
 								},
 								{
 									"key": "date",
-									"value": "Fri, 10 Apr 2026 00:08:24 GMT"
+									"value": "Mon, 20 Apr 2026 10:42:23 GMT"
 								},
 								{
 									"key": "server",
@@ -705,7 +705,7 @@
 							],
 							"cookie": [],
 							"responseTime": null,
-							"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-eb94af766084d0a5ba64867726d8e649-982eeb7757d8f8f2-00\"\n}"
+							"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-6d6b78edb93b0b207c91bf694cf3ce52-a21e5d2ba1388128-00\"\n}"
 						}
 					]
 				}

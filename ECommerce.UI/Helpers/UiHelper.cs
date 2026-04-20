@@ -69,7 +69,7 @@ internal class UiHelper(ITagService tagService)
             switch ((int)exception.StatusCode)
             {
                 case var code when code is 404:
-                    DisplayWarning("The content you requested could not be found, please check that the" +
+                    DisplayWarning("The content you requested could not be found, please check that the " +
                                    "content you want exists and is accessible. | 404 Not Found");
                     break;
                 
@@ -79,7 +79,7 @@ internal class UiHelper(ITagService tagService)
                     break;
                 
                 case var code when code is > 500:
-                    DisplayWarning("A server side error has occurred while processing your request," +
+                    DisplayWarning("A server side error has occurred while processing your request, " +
                                    "please check that the API is working and all entered details are correct. | 5xx");
                     break;
                 default:
@@ -93,7 +93,7 @@ internal class UiHelper(ITagService tagService)
                 DisplayWarning("One or more of the arguments you have entered was null, " +
                                "please try again with non-null details.");
             else 
-                DisplayWarning("An error has occurred with one or more of the arguments you have entered," +
+                DisplayWarning("An error has occurred with one or more of the arguments you have entered, " +
                                "please check that any details you enter are correct before trying again.");
         }
         else

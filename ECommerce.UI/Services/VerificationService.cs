@@ -10,6 +10,11 @@ public class VerificationService : IVerificationService
         return decimal.TryParse(input, out decimalValue);
     }
 
+    public bool TryParseValidQuantity(string quantity, out int parsedQuantity)
+    {
+        return int.TryParse(quantity.ToString(), out parsedQuantity) && parsedQuantity > 0;
+    }
+
     public bool TryParseItemFormat(string input, out ItemFormat itemFormat)
     {
         return Enum.TryParse(input, true, out itemFormat);

@@ -1,17 +1,19 @@
 ﻿using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
 using ECommerce.UI.Interfaces;
+using Spectre.Console;
 using static ECommerce.UI.Helpers.DisplayHelper;
 
 namespace ECommerce.UI.AdministratorUi;
 
-internal class ManageSalesUi(ISaleService saleService)
+internal class ManageSalesUi(ISaleService saleService, IVerificationService verificationService)
 {
     //------- Menu Methods -------
     internal async Task ManageSales()
     {
         while (true)
         {
+            Console.Clear();
             var option = DisplayMenu<ManageSalesMenu>();
 
             switch (option)
@@ -20,7 +22,7 @@ internal class ManageSalesUi(ISaleService saleService)
                     await ReviewSales();
                     break;
                 case ManageSalesMenu.CreateNewSale:
-                    //TODO add a call to the create sale method
+                    await CreateNewSale();
                     break;
                 case ManageSalesMenu.DeleteSale:
                     //TODO add a call to the delete sale method
@@ -64,6 +66,44 @@ internal class ManageSalesUi(ISaleService saleService)
                 UiHelper.DisplayCaughtException(ex);
                 return;
             }
+        }
+    }
+
+    private async Task CreateNewSale()
+    {
+        Dictionary<int, int> idQuantityPair = [];
+        while (true)
+        {
+            Console.Clear();
+            var id = UiHelper.GetArgument("Please enter the ID of the sold item:");
+            if (id is null) return;
+            
+            var quantity = UiHelper.GetArgument("Please enter the quantity of the sold item:");
+            if (quantity is null) return;
+            
+            if (!verificationService.TryParseValidQuantity(quantity, out var parsedQuantity)
+                || !int.TryParse(id, out var parsedId))
+            {
+                DisplayWarning("Please enter a valid number that is greater than or equal to 1.");
+                UiHelper.WaitForUser();
+                continue;
+            }
+            
+            idQuantityPair.Add(parsedId, parsedQuantity);
+
+            if (!await AnsiConsole.ConfirmAsync("Would you like to add another item to the sale?"))
+                break;
+        }
+
+        try
+        {
+            await saleService.PostSaleAsync(idQuantityPair);
+            DisplaySuccess("Successfully created a new sale record.");
+            UiHelper.WaitForUser();
+        }
+        catch (HttpRequestException ex)
+        {
+            UiHelper.DisplayCaughtException(ex);
         }
     }
 }

@@ -21,7 +21,7 @@ public class ItemService(IApiService apiService) : IItemService
 
     public async Task<ItemDto> GetItemByIdAsync(int id)
     {
-        var rawJson = await apiService.GetAsync(ApiUris.ItemRequestUri + id);
+        var rawJson = await apiService.GetAsync($"{ApiUris.ItemRequestUri}/{id}");
 
         return JsonSerializer.Deserialize<ItemDto>(rawJson, Utils.GetJsonSerializerOptions())!;
     }

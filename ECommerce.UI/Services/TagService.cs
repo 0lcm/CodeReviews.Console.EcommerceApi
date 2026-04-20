@@ -24,4 +24,14 @@ public class TagService(IApiService apiService) : ITagService
         var rawJson = await apiService.GetAsync(requestUrl);
         return JsonSerializer.Deserialize<int>(rawJson, Utils.GetJsonSerializerOptions());
     }
+
+    public async Task PostTagAsync(string tagName)
+    {
+        var tagDto = new CreateTagDto
+        {
+            TagName = tagName
+        };
+        
+        await apiService.PostAsync(ApiUris.TagRequestUri, tagDto);
+    }
 }

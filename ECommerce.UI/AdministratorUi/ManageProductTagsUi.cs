@@ -28,7 +28,7 @@ internal class ManageProductTagsUi(ITagService tagService)
                     await SearchTags();
                     break;
                 case ManageProductTagsMenu.CreateNewTag:
-                    //TODO add a call to create tag
+                    await CreateNewTag();
                     break;
                 case ManageProductTagsMenu.DeleteTag:
                     //TODO add a call to delete tag
@@ -92,6 +92,31 @@ internal class ManageProductTagsUi(ITagService tagService)
     
             if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))
                 return;
+        }
+    }
+    
+    private async Task CreateNewTag()
+    {
+        while (true)
+        {
+            var name = UiHelper.GetArgument("Please enter a name for the new tag:");
+            if (name is null) return;
+
+            if (!await AnsiConsole.ConfirmAsync($"are you sure you want to create a new tag with the name {name}?"))
+                continue;
+
+            try
+            {
+                await tagService.PostTagAsync(name);
+                DisplaySuccess("Successfully  created a new tag");
+                UiHelper.WaitForUser();
+            }
+            catch (HttpRequestException ex)
+            {
+                UiHelper.DisplayCaughtException(ex);
+            }
+
+            return;
         }
     }
 }

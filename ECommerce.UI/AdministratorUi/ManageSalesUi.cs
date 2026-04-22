@@ -25,7 +25,7 @@ internal class ManageSalesUi(ISaleService saleService, IVerificationService veri
                     await CreateNewSale();
                     break;
                 case ManageSalesMenu.DeleteSale:
-                    //TODO add a call to the delete sale method
+                    await DeleteSale();
                     break;
                 case ManageSalesMenu.Back:
                     return;
@@ -104,6 +104,42 @@ internal class ManageSalesUi(ISaleService saleService, IVerificationService veri
         catch (HttpRequestException ex)
         {
             UiHelper.DisplayCaughtException(ex);
+        }
+    }
+
+    private async Task DeleteSale()
+    {
+        while (true)
+        {
+            var id = UiHelper.GetArgument("Please enter the ID of the sale to delete:");
+            if (id is null) return;
+
+            if (!int.TryParse(id, out var parsedId))
+            {
+                DisplayWarning("Please enter a valid number that is greater than or equal to 1.");
+                UiHelper.WaitForUser();
+                continue;
+            }
+
+            if (!await AnsiConsole.ConfirmAsync($"Are you sure you want to delete the sale ID {parsedId}?"))
+            {
+                DisplaySuccess("Deletion was cancelled.");
+                UiHelper.WaitForUser();
+                return;
+            }
+
+            try
+            {
+                await saleService.DeleteSaleAsync(parsedId);
+                DisplaySuccess("Successfully deleted the sale.");
+                UiHelper.WaitForUser();
+            }
+            catch (HttpRequestException ex)
+            {
+                UiHelper.DisplayCaughtException(ex);
+            }
+
+            return;
         }
     }
 }

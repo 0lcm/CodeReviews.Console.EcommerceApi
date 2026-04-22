@@ -29,4 +29,9 @@ public class SaleService(IApiService apiService, IItemService itemService) : ISa
         
         await apiService.PostAsync(ApiUris.SaleRequestUri, saleItems);
     }
+
+    public async Task DeleteSaleAsync(int id)
+    {
+        await apiService.DeleteAsync($"{ApiUris.SaleRequestUri}?saleId={id}");
+    }
 }

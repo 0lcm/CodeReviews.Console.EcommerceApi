@@ -4,7 +4,7 @@ using ECommerce.UI.Interfaces;
 using Spectre.Console;
 using static ECommerce.UI.Helpers.DisplayHelper;
 
-namespace ECommerce.UI.AdministratorUi;
+namespace ECommerce.UI.UserInterface.AdministratorUi;
 
 internal class ManageSalesUi(ISaleService saleService, IVerificationService verificationService)
 {

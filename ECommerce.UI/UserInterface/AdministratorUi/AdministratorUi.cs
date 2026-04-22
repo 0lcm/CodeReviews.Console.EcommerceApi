@@ -2,9 +2,9 @@
 using ECommerce.UI.Helpers;
 using static ECommerce.UI.Helpers.DisplayHelper;
 
-namespace ECommerce.UI.AdministratorUi;
+namespace ECommerce.UI.UserInterface.AdministratorUi;
 
-internal class AdministratorUi(ManageProductsUi manageProductsUi, ManageProductTagsUi manageProductTagsUi, ManageSalesUi manageSalesUi)
+internal class AdministratorUi(ManageProductsUi manageProductsUi, ManageProductTagsUi manageProductTagsUi, ManageSalesUi manageSalesUi, TestingUi.TestingUi testingUi)
 {
     //------- Main Menu Methods -------
     internal async Task MainMenu()
@@ -38,7 +38,7 @@ internal class AdministratorUi(ManageProductsUi manageProductsUi, ManageProductT
                 await manageSalesUi.ManageSales();
                 break;
             case AdminMainMenu.EnterTestingEnvironment:
-                //TODO add a call to the test UI's main menu
+                await testingUi.TestingMenu();
                 break;
             case AdminMainMenu.ExitApplication:
                 ExitApplication();

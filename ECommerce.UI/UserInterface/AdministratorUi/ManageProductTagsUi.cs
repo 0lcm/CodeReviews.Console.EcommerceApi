@@ -1,10 +1,10 @@
-﻿using static ECommerce.UI.Helpers.DisplayHelper;
-using ECommerce.UI.Enums;
-using ECommerce.UI.Interfaces;
+﻿using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
+using ECommerce.UI.Interfaces;
 using Spectre.Console;
+using static ECommerce.UI.Helpers.DisplayHelper;
 
-namespace ECommerce.UI.AdministratorUi;
+namespace ECommerce.UI.UserInterface.AdministratorUi;
 
 internal class ManageProductTagsUi(ITagService tagService)
 {

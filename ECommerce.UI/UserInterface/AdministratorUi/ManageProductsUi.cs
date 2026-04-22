@@ -1,15 +1,11 @@
-﻿using System.Net;
-using ECommerce.Shared;
-using ECommerce.Shared.Models;
-using static ECommerce.UI.Helpers.DisplayHelper;
+﻿using ECommerce.Shared;
 using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
 using ECommerce.UI.Interfaces;
-using ECommerce.UI.Services;
 using Spectre.Console;
-using Spectre.Console.Rendering;
+using static ECommerce.UI.Helpers.DisplayHelper;
 
-namespace ECommerce.UI.AdministratorUi;
+namespace ECommerce.UI.UserInterface.AdministratorUi;
 
 internal class ManageProductsUi(IItemService itemService, IVerificationService verificationService)
 {

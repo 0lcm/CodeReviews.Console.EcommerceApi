@@ -1,5 +1,6 @@
 ﻿namespace ECommerce.UI.Enums;
 
+//------- Administrator Ui Enums -------
 internal enum AdminMainMenu
 {
     ManageProducts,
@@ -45,5 +46,22 @@ internal enum ManageSalesMenu
     ReviewSales,
     CreateNewSale,
     DeleteSale,
+    Back
+}
+
+//------- Testing Ui Enums -------
+internal enum TestingMenuOption
+{
+    BrowseProducts,
+    SearchProducts,
+    Checkout,
+    ExitTestingEnvironment,
+}
+
+internal enum PaginationControllerWithAddToCart
+{
+    LastPage,
+    NextPage,
+    AddToCart,
     Back
 }

@@ -13,6 +13,7 @@ builder.Services.AddTransient<IApiService, ApiService>();
 builder.Services.AddTransient<IItemService, ItemService>();
 builder.Services.AddTransient<ITagService, TagService>();
 builder.Services.AddTransient<ISaleService, SaleService>();
+builder.Services.AddTransient<ICartService, CartService>();
 
 builder.Services.AddTransient<IVerificationService, VerificationService>();
 
@@ -21,6 +22,7 @@ builder.Services.AddTransient<ManageProductTagsUi>();
 builder.Services.AddTransient<ManageSalesUi>();
 
 builder.Services.AddTransient<ProductTestUi>();
+builder.Services.AddTransient<CheckoutUi>();
 
 builder.Services.AddTransient<AdministratorUi>();
 builder.Services.AddTransient<TestingUi>();

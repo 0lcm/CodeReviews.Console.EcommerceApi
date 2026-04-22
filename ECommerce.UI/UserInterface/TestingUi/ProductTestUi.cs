@@ -5,7 +5,7 @@ using static ECommerce.UI.Helpers.DisplayHelper;
 
 namespace ECommerce.UI.UserInterface.TestingUi;
 
-public class ProductTestUi(IItemService itemService)
+internal class ProductTestUi(IItemService itemService, CheckoutUi checkoutUi)
 {
     /// <summary>
     /// Presents a list of products to the user and handles pagination
@@ -36,7 +36,7 @@ public class ProductTestUi(IItemService itemService)
                         pageNumber += 1;
                         break;
                     case PaginationControllerWithAddToCart.AddToCart:
-                        //TODO add a call to the add to cart method
+                        await checkoutUi.AddItemToCartAsync(response);
                         break;
                     case PaginationControllerWithAddToCart.Back:
                         return;

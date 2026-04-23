@@ -4,13 +4,16 @@ using static ECommerce.UI.Helpers.DisplayHelper;
 
 namespace ECommerce.UI.UserInterface.AdministratorUi;
 
-internal class AdministratorUi(ManageProductsUi manageProductsUi, ManageProductTagsUi manageProductTagsUi, ManageSalesUi manageSalesUi, TestingUi.TestingUi testingUi)
+internal class AdministratorUi(
+    ManageProductsUi manageProductsUi,
+    ManageProductTagsUi manageProductTagsUi,
+    ManageSalesUi manageSalesUi,
+    TestingUi.TestingUi testingUi)
 {
     //------- Main Menu Methods -------
     internal async Task MainMenu()
     {
         while (true)
-        {
             try
             {
                 Console.Clear();
@@ -21,7 +24,6 @@ internal class AdministratorUi(ManageProductsUi manageProductsUi, ManageProductT
             {
                 UiHelper.DisplayCaughtException(ex);
             }
-        }
     }
 
     private async Task HandleMainMenuOption(AdminMainMenu option)
@@ -31,7 +33,7 @@ internal class AdministratorUi(ManageProductsUi manageProductsUi, ManageProductT
             case AdminMainMenu.ManageProducts:
                 await manageProductsUi.ManageProductsMenu();
                 break;
-            case  AdminMainMenu.ManageProductTags:
+            case AdminMainMenu.ManageProductTags:
                 await manageProductTagsUi.ManageProductTags();
                 break;
             case AdminMainMenu.ManageSales:

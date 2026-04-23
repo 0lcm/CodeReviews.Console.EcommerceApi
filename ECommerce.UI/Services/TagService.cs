@@ -8,9 +8,10 @@ namespace ECommerce.UI.Services;
 
 public class TagService(IApiService apiService) : ITagService
 {
-    public async Task<PagedResponse<TagDto>> GetTagsAsync(int pageNumber = 1, int pageSize = 10, string? searchTerm = null)
+    public async Task<PagedResponse<TagDto>> GetTagsAsync(int pageNumber = 1, int pageSize = 10,
+        string? searchTerm = null)
     {
-        var requestUrl = Utils.FormatQueryWithPaginationParams(baseUrl: ApiUris.TagRequestUri,
+        var requestUrl = Utils.FormatQueryWithPaginationParams(ApiUris.TagRequestUri,
             pageNumber, pageSize, searchTerm, null);
 
         var rawJson = await apiService.GetAsync(requestUrl);
@@ -31,7 +32,7 @@ public class TagService(IApiService apiService) : ITagService
         {
             TagName = tagName
         };
-        
+
         await apiService.PostAsync(ApiUris.TagRequestUri, tagDto);
     }
 

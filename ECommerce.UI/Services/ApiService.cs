@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Json;
-using ECommerce.Shared.Models;
 using ECommerce.UI.Configuration;
 using ECommerce.UI.Interfaces;
 
@@ -13,7 +12,7 @@ public class ApiService(IHttpClientFactory clientFactory) : IApiService
     {
         return SendGetRequest(path);
     }
-    
+
 
     public Task PostAsync<T>(string path, T body)
     {
@@ -31,7 +30,7 @@ public class ApiService(IHttpClientFactory clientFactory) : IApiService
     {
         var client = clientFactory.CreateClient(BaseUrl);
         var response = await client.GetAsync(path);
-        
+
         return await HandleResponse(response);
     }
 
@@ -46,7 +45,7 @@ public class ApiService(IHttpClientFactory clientFactory) : IApiService
     {
         var client = clientFactory.CreateClient(BaseUrl);
         var response = await client.DeleteAsync(path);
-        
+
         await HandleResponse(response);
     }
 
@@ -59,13 +58,14 @@ public class ApiService(IHttpClientFactory clientFactory) : IApiService
             case var code when code >= 400 && code < 500:
                 throw new HttpRequestException($"Client side error occurred, status code: {code}", null,
                     response.StatusCode);
-            
+
             case var code when code >= 500:
                 throw new HttpRequestException($"Server side error occurred, status code: {code}", null,
                     response.StatusCode);
-            
+
             default:
-                throw new HttpRequestException($"An unexpected error occurred with the status code: {response.StatusCode}",
+                throw new HttpRequestException(
+                    $"An unexpected error occurred with the status code: {response.StatusCode}",
                     null, response.StatusCode);
         }
     }

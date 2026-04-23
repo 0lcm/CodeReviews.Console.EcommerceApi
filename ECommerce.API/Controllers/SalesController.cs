@@ -10,7 +10,7 @@ namespace ECommerce.API.Controllers;
 public class SalesController(ISaleService saleService) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> PostSale([FromBody]List<CreateSaleItemDto> saleItems)
+    public async Task<IActionResult> PostSale([FromBody] List<CreateSaleItemDto> saleItems)
     {
         var success = await saleService.PostSaleAsync(saleItems);
         return success switch
@@ -20,15 +20,12 @@ public class SalesController(ISaleService saleService) : ControllerBase
             false => StatusCode(StatusCodes.Status500InternalServerError)
         };
     }
-    
+
     [HttpGet]
     public async Task<ActionResult<PagedResponse<Sale>>> GetItemsAsync([FromQuery] PaginationParams paginationParams)
     {
-        var pagedResponse = await  saleService.GetSalesAsync(paginationParams);
-        if (pagedResponse.TotalRecords == 0)
-        {
-            return NotFound();
-        }
+        var pagedResponse = await saleService.GetSalesAsync(paginationParams);
+        if (pagedResponse.TotalRecords == 0) return NotFound();
         return Ok(pagedResponse);
     }
 

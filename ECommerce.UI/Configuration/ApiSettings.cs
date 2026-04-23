@@ -5,7 +5,7 @@ namespace ECommerce.UI.Configuration;
 internal class ApiSettings
 {
     internal static string BaseUrl { get; } = GetBaseUri();
-    
+
     //------- Helper Methods -------
     private static string GetBaseUri()
     {
@@ -32,7 +32,7 @@ internal class ApiSettings
             var baseUrl = uri.Split(';').First();
             return $"{baseUrl}/api/";
         }
-        
+
         throw new Exception("Could not find the Api's launchSettings.json profile");
     }
 
@@ -44,10 +44,10 @@ internal class ApiSettings
         {
             if (directory.GetFiles("*.sln").Any())
                 return directory.FullName;
-            
+
             directory = directory.Parent;
         }
-        
+
         throw new DirectoryNotFoundException("Could not find the solution directory");
     }
 }

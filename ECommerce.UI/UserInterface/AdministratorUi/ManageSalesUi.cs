@@ -32,27 +32,26 @@ internal class ManageSalesUi(ISaleService saleService, IVerificationService veri
             }
         }
     }
-    
+
     //------- CRUD Menus -------
     private async Task ReviewSales()
     {
         var pageNumber = 1;
         while (true)
-        {
             try
             {
                 Console.Clear();
                 var response = await saleService.GetSalesAsync(pageNumber);
                 var iRenderable = UiHelper.BuildSaleDtoRenderable(response);
-                
-                
+
+
                 DisplayRows(iRenderable);
-            
+
                 var option = DisplayMenu<PaginationController>();
                 switch (option)
                 {
                     case PaginationController.LastPage:
-                        pageNumber = pageNumber == 1 ? 1 :  pageNumber - 1;
+                        pageNumber = pageNumber == 1 ? 1 : pageNumber - 1;
                         break;
                     case PaginationController.NextPage:
                         pageNumber += 1;
@@ -66,7 +65,6 @@ internal class ManageSalesUi(ISaleService saleService, IVerificationService veri
                 UiHelper.DisplayCaughtException(ex);
                 return;
             }
-        }
     }
 
     private async Task CreateNewSale()
@@ -77,10 +75,10 @@ internal class ManageSalesUi(ISaleService saleService, IVerificationService veri
             Console.Clear();
             var id = UiHelper.GetArgument("Please enter the ID of the sold item:");
             if (id is null) return;
-            
+
             var quantity = UiHelper.GetArgument("Please enter the quantity of the sold item:");
             if (quantity is null) return;
-            
+
             if (!verificationService.TryParseValidQuantity(quantity, out var parsedQuantity)
                 || !int.TryParse(id, out var parsedId))
             {
@@ -88,7 +86,7 @@ internal class ManageSalesUi(ISaleService saleService, IVerificationService veri
                 UiHelper.WaitForUser();
                 continue;
             }
-            
+
             idQuantityPair.Add(parsedId, parsedQuantity);
 
             if (!await AnsiConsole.ConfirmAsync("Would you like to add another item to the sale?"))

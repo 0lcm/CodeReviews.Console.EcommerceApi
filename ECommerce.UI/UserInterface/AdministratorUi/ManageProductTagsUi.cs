@@ -9,7 +9,7 @@ namespace ECommerce.UI.UserInterface.AdministratorUi;
 internal class ManageProductTagsUi(ITagService tagService)
 {
     private readonly UiHelper _uiHelper = new(tagService);
-    
+
     //------- Menu Methods -------
     internal async Task ManageProductTags()
     {
@@ -38,31 +38,30 @@ internal class ManageProductTagsUi(ITagService tagService)
             }
         }
     }
-    
+
     //------- CRUD Menus -------
     /// <summary>
-    /// Presents a list of tags to the user and handles pagination
+    ///     Presents a list of tags to the user and handles pagination
     /// </summary>
     /// <param name="searchTerm">optional search term to filter results</param>
     private async Task ReviewTags(string? searchTerm = null)
     {
         var pageNumber = 1;
         while (true)
-        {
             try
             {
                 Console.Clear();
                 var response = await tagService.GetTagsAsync(pageNumber, searchTerm: searchTerm);
                 var iRenderable = _uiHelper.BuildTagDtoRenderable(response);
-                
-                
+
+
                 DisplayRows(iRenderable);
-            
+
                 var option = DisplayMenu<PaginationController>();
                 switch (option)
                 {
                     case PaginationController.LastPage:
-                        pageNumber = pageNumber == 1 ? 1 :  pageNumber - 1;
+                        pageNumber = pageNumber == 1 ? 1 : pageNumber - 1;
                         break;
                     case PaginationController.NextPage:
                         pageNumber += 1;
@@ -76,25 +75,24 @@ internal class ManageProductTagsUi(ITagService tagService)
                 UiHelper.DisplayCaughtException(ex);
                 return;
             }
-        }
     }
-    
+
     private async Task SearchTags()
     {
         while (true)
         {
             Console.Clear();
-    
+
             var searchTerm = UiHelper.GetArgument("Please enter a term to search by:");
             if (searchTerm is null) return;
-            
+
             await ReviewTags(searchTerm);
-    
+
             if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))
                 return;
         }
     }
-    
+
     private async Task CreateNewTag()
     {
         while (true)

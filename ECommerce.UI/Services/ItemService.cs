@@ -9,10 +9,10 @@ namespace ECommerce.UI.Services;
 
 public class ItemService(IApiService apiService) : IItemService
 {
-    public async Task<PagedResponse<ItemDto>> GetItemsAsync(int pageNumber = 1, int pageSize = 10, 
+    public async Task<PagedResponse<ItemDto>> GetItemsAsync(int pageNumber = 1, int pageSize = 10,
         string? searchTerm = null, string? searchGenre = null)
     {
-        var requestUrl = Utils.FormatQueryWithPaginationParams(baseUrl: ApiUris.ItemRequestUri,
+        var requestUrl = Utils.FormatQueryWithPaginationParams(ApiUris.ItemRequestUri,
             pageNumber, pageSize, searchTerm, searchGenre);
 
         var rawJson = await apiService.GetAsync(requestUrl);
@@ -31,17 +31,14 @@ public class ItemService(IApiService apiService) : IItemService
         await apiService.DeleteAsync($"{ApiUris.ItemRequestUri}/{id}");
     }
 
-    public async Task PostItemAsync(ItemFormat format, ItemType type, string title, string artist, decimal price, string genre,
-        
+    public async Task PostItemAsync(ItemFormat format, ItemType type, string title, string artist, decimal price,
+        string genre,
         string tags)
     {
         List<TagDto> tagDtos = [];
 
         var tagArray = tags.Split(',');
-        foreach (var tag in tagArray)
-        {
-            tagDtos.Add(new TagDto{TagName =  tag});
-        }
+        foreach (var tag in tagArray) tagDtos.Add(new TagDto { TagName = tag });
 
         var itemDto = new CreateItemDto
         {
@@ -53,7 +50,7 @@ public class ItemService(IApiService apiService) : IItemService
             Genre = genre,
             Tags = tagDtos
         };
-        
-        await apiService.PostAsync(ApiUris.ItemRequestUri,  itemDto);
+
+        await apiService.PostAsync(ApiUris.ItemRequestUri, itemDto);
     }
 }

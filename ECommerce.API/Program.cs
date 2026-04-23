@@ -8,10 +8,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
+    .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -47,9 +44,9 @@ using (var scope = app.Services.CreateScope())
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "ECommerce");
     Directory.CreateDirectory(dbDirectory);
-    
+
     var isFirstRun = !await db.Database.CanConnectAsync();
-    
+
     await db.Database.MigrateAsync();
 
     if (isFirstRun) await DbSeeder.SeedItemsAsync(db);

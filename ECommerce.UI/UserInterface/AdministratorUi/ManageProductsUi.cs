@@ -36,10 +36,10 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
             }
         }
     }
-    
+
     //------- CRUD Menus -------
     /// <summary>
-    /// Presents a list of products to the user and handles pagination
+    ///     Presents a list of products to the user and handles pagination
     /// </summary>
     /// <param name="searchTerm">optional search term to filter results</param>
     /// <param name="searchGenre">optional genre filter</param>
@@ -47,21 +47,21 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
     {
         var pageNumber = 1;
         while (true)
-        {
             try
             {
                 Console.Clear();
-                var response = await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre);
+                var response =
+                    await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre);
                 var iRenderable = UiHelper.BuildItemDtoRenderable(response);
-                
-                
+
+
                 DisplayRows(iRenderable);
-            
+
                 var option = DisplayMenu<PaginationController>();
                 switch (option)
                 {
                     case PaginationController.LastPage:
-                        pageNumber = pageNumber == 1 ? 1 :  pageNumber - 1;
+                        pageNumber = pageNumber == 1 ? 1 : pageNumber - 1;
                         break;
                     case PaginationController.NextPage:
                         pageNumber += 1;
@@ -75,7 +75,6 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                 UiHelper.DisplayCaughtException(ex);
                 return;
             }
-        }
     }
 
     private async Task SearchProducts()
@@ -83,15 +82,15 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
         while (true)
         {
             Console.Clear();
-            
-            List<string> enumNames = Enum.GetNames<SearchController>().ToList();
+
+            var enumNames = Enum.GetNames<SearchController>().ToList();
             var options = DisplayMultiPrompt(enumNames, requireChoice: false);
 
             List<SearchController> selectedFilters;
             try
             {
                 selectedFilters = options
-                    .Select(s => (SearchController)Enum.Parse<SearchController>(s))
+                    .Select(s => Enum.Parse<SearchController>(s))
                     .ToList();
             }
             catch (Exception ex)
@@ -128,26 +127,26 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
         ItemFormat format;
         ItemType type;
         decimal price;
-        
+
         var title = UiHelper.GetArgument("Please enter the item title:");
         if (title is null) return;
-        
+
         var artist = UiHelper.GetArgument("Please enter the artist's name:");
         if (artist is null) return;
-        
-        var genre =  UiHelper.GetArgument("Please enter the genre:");
+
+        var genre = UiHelper.GetArgument("Please enter the genre:");
         if (genre is null) return;
-        
+
         var tags = UiHelper.GetArgument("Please enter any tags separated by commas:");
         if (tags is null) return;
-        
+
         while (true)
         {
             const string prompt = "Please enter an item format:";
             const string instructions = "Valid item formats are only: Vinyl, Cd, or Digital.";
             var itemFormat = UiHelper.GetArgument(prompt, instructions);
             if (itemFormat is null) return;
-            
+
             if (!verificationService.TryParseItemFormat(itemFormat, out format))
             {
                 DisplayWarning("Please choose either: vinyl, cd, or digital format.");
@@ -157,14 +156,14 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
 
             break;
         }
-        
+
         while (true)
         {
             const string prompt = "Please enter an item type:";
             const string instructions = "Valid item types are only: Album, Single, or Mixtape";
             var itemType = UiHelper.GetArgument(prompt, instructions);
             if (itemType is null) return;
-            
+
             if (!verificationService.TryParseItemType(itemType, out type))
             {
                 DisplayWarning("Please choose either: album, single, or mixtape type.");
@@ -205,13 +204,13 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
     private async Task DeleteProduct()
     {
         while (true)
-        { 
+        {
             int id;
             try
             {
                 var unparsedId = UiHelper.GetArgument("Please enter the ID of the product to delete:");
                 if (string.IsNullOrWhiteSpace(unparsedId)) throw new ArgumentNullException();
-                
+
                 var success = int.TryParse(unparsedId, out id);
                 if (!success)
                 {
@@ -220,7 +219,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                     continue;
                 }
 
-                if (await AnsiConsole.ConfirmAsync($"Are you sure you want to delete this item?"))
+                if (await AnsiConsole.ConfirmAsync("Are you sure you want to delete this item?"))
                 {
                     await itemService.DeleteItemAsync(id);
                     DisplaySuccess("Successfully deleted product.");
@@ -229,7 +228,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                 {
                     DisplaySuccess("Deletion was cancelled..");
                 }
-                
+
                 UiHelper.WaitForUser();
             }
             catch (Exception ex)

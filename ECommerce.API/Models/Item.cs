@@ -14,7 +14,7 @@ public class Item : ISoftDeletable
     public required string Genre { get; set; }
     public List<Tag> Tags { get; set; } = [];
     public List<Sale> Sales { get; set; } = [];
-    
+
     public bool IsDeleted { get; set; }
     public DateTime? DeletedOnUtc { get; set; }
 }

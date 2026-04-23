@@ -1,6 +1,6 @@
 ﻿namespace ECommerce.UI.Configuration;
 
-internal class ApiUris()
+internal class ApiUris
 {
     internal static readonly string ItemRequestUri = $"{ApiSettings.BaseUrl}items";
     internal static readonly string TagRequestUri = $"{ApiSettings.BaseUrl}tags";

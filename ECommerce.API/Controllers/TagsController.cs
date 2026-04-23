@@ -1,7 +1,6 @@
 ﻿using ECommerce.API.Interfaces;
 using ECommerce.API.Models;
 using ECommerce.Shared.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers;
@@ -16,7 +15,7 @@ public class TagsController(ITagService tagService) : ControllerBase
         var pagedResponse = await tagService.GetTagsAsync(paginationParams);
         if (pagedResponse.TotalRecords == 0)
             return NotFound();
-        
+
         return Ok(pagedResponse);
     }
 
@@ -30,7 +29,7 @@ public class TagsController(ITagService tagService) : ControllerBase
             _ => Ok(tag)
         };
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> PostTag([FromBody] CreateTagDto tagDto)
     {

@@ -13,7 +13,7 @@ public class TagRepository(ApiDbContext db) : ITagRepository
             .OrderBy(t => t.TagId)
             .AsQueryable();
     }
-    
+
     public async Task<Tag?> GetTagByName(string name)
     {
         return await db.Tags.FirstOrDefaultAsync(t => t.TagName.ToLower() == name.ToLower());

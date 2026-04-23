@@ -1,6 +1,4 @@
-﻿using ECommerce.Shared.Models;
-
-namespace ECommerce.UI.Interfaces;
+﻿namespace ECommerce.UI.Interfaces;
 
 public interface IApiService
 {

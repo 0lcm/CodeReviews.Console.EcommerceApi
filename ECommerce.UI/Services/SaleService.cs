@@ -10,7 +10,8 @@ public class SaleService(IApiService apiService, IItemService itemService) : ISa
 {
     public async Task<PagedResponse<SaleDto>> GetSalesAsync(int pageNumber = 1, int pageSize = 10)
     {
-        var requestUrl = Utils.FormatQueryWithPaginationParams(ApiUris.SaleRequestUri, pageNumber, pageSize, null, null);
+        var requestUrl =
+            Utils.FormatQueryWithPaginationParams(ApiUris.SaleRequestUri, pageNumber, pageSize, null, null);
         var rawJson = await apiService.GetAsync(requestUrl);
 
         return JsonSerializer.Deserialize<PagedResponse<SaleDto>>(rawJson, Utils.GetJsonSerializerOptions())!;
@@ -23,10 +24,10 @@ public class SaleService(IApiService apiService, IItemService itemService) : ISa
         {
             var item = await itemService.GetItemByIdAsync(pair.Key);
             if (item is null) throw new ArgumentException($"No item found with the ID {pair.Key}");
-            
-            saleItems.Add(new CreateSaleItemDto{ ItemId = pair.Key, Quantity = pair.Value });
+
+            saleItems.Add(new CreateSaleItemDto { ItemId = pair.Key, Quantity = pair.Value });
         }
-        
+
         await apiService.PostAsync(ApiUris.SaleRequestUri, saleItems);
     }
 

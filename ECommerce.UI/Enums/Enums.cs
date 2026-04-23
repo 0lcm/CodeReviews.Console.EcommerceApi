@@ -55,7 +55,7 @@ internal enum TestingMenuOption
     BrowseProducts,
     SearchProducts,
     Checkout,
-    ExitTestingEnvironment,
+    ExitTestingEnvironment
 }
 
 internal enum PaginationControllerWithAddToCart

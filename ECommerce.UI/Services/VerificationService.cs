@@ -12,7 +12,7 @@ public class VerificationService : IVerificationService
 
     public bool TryParseValidQuantity(string quantity, out int parsedQuantity)
     {
-        return int.TryParse(quantity.ToString(), out parsedQuantity) && parsedQuantity > 0;
+        return int.TryParse(quantity, out parsedQuantity) && parsedQuantity > 0;
     }
 
     public bool TryParseItemFormat(string input, out ItemFormat itemFormat)

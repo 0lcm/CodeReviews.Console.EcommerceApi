@@ -27,7 +27,7 @@ builder.Services.AddTransient<CheckoutUi>();
 builder.Services.AddTransient<AdministratorUi>();
 builder.Services.AddTransient<TestingUi>();
 
-builder.Services.AddHttpClient(ApiSettings.BaseUrl, 
+builder.Services.AddHttpClient(ApiSettings.BaseUrl,
     client => client.BaseAddress = new Uri(ApiSettings.BaseUrl));
 builder.Services.AddHostedService<Worker>();
 

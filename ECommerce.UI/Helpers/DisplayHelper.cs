@@ -8,7 +8,7 @@ internal class DisplayHelper
 {
     //------- Colors -------
     internal const string White = "#f1f1f1";
-    internal const string Grey = "#8c8e8f"; 
+    internal const string Grey = "#8c8e8f";
     internal const string Green = "#32aa3b";
     private const string Red = "#cd2d2d";
     internal const string Yellow = "#e2b929";

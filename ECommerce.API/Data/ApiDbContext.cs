@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ECommerce.API.Models;
+﻿using ECommerce.API.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace ECommerce.API.Data;
@@ -22,12 +22,12 @@ public class ApiDbContext(DbContextOptions<ApiDbContext> options) : DbContext(op
             .HasOne(si => si.Item)
             .WithMany()
             .HasForeignKey(si => si.ItemId);
-        
+
         modelBuilder.Entity<Item>().HasQueryFilter(i => !i.IsDeleted);
         modelBuilder.Entity<Sale>().HasQueryFilter(s => !s.IsDeleted);
         modelBuilder.Entity<Tag>().HasQueryFilter(t => !t.IsDeleted);
         modelBuilder.Entity<SaleItem>().HasQueryFilter(si => !si.Item.IsDeleted);
-        
+
         modelBuilder.Entity<Sale>().Ignore(s => s.TotalPrice);
     }
 

@@ -9,7 +9,7 @@ namespace ECommerce.UI.UserInterface.TestingUi;
 internal class ProductTestUi(IItemService itemService, CheckoutUi checkoutUi)
 {
     /// <summary>
-    /// Presents a list of products to the user and handles pagination
+    ///     Presents a list of products to the user and handles pagination
     /// </summary>
     /// <param name="searchTerm">optional search term to filter results</param>
     /// <param name="searchGenre">optional genre filter</param>
@@ -17,21 +17,21 @@ internal class ProductTestUi(IItemService itemService, CheckoutUi checkoutUi)
     {
         var pageNumber = 1;
         while (true)
-        {
             try
             {
                 Console.Clear();
-                var response = await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre);
+                var response =
+                    await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre);
                 var iRenderable = UiHelper.BuildItemDtoRenderable(response);
-                
-                
+
+
                 DisplayRows(iRenderable);
-            
+
                 var option = DisplayMenu<PaginationControllerWithAddToCart>();
                 switch (option)
                 {
                     case PaginationControllerWithAddToCart.LastPage:
-                        pageNumber = pageNumber == 1 ? 1 :  pageNumber - 1;
+                        pageNumber = pageNumber == 1 ? 1 : pageNumber - 1;
                         break;
                     case PaginationControllerWithAddToCart.NextPage:
                         pageNumber += 1;
@@ -48,23 +48,22 @@ internal class ProductTestUi(IItemService itemService, CheckoutUi checkoutUi)
                 UiHelper.DisplayCaughtException(ex);
                 return;
             }
-        }
     }
-    
+
     internal async Task SearchProducts()
     {
         while (true)
         {
             Console.Clear();
-            
-            List<string> enumNames = Enum.GetNames<SearchController>().ToList();
+
+            var enumNames = Enum.GetNames<SearchController>().ToList();
             var options = DisplayMultiPrompt(enumNames, requireChoice: false);
 
             List<SearchController> selectedFilters;
             try
             {
                 selectedFilters = options
-                    .Select(s => (SearchController)Enum.Parse<SearchController>(s))
+                    .Select(s => Enum.Parse<SearchController>(s))
                     .ToList();
             }
             catch (Exception ex)

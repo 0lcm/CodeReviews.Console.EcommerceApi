@@ -1,11 +1,10 @@
-﻿using ECommerce.UI.Enums;
-using static ECommerce.UI.Helpers.DisplayHelper;
-
-using ECommerce.Shared.Models;
+﻿using ECommerce.Shared.Models;
+using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
 using ECommerce.UI.Interfaces;
 using Spectre.Console;
 using Spectre.Console.Rendering;
+using static ECommerce.UI.Helpers.DisplayHelper;
 
 namespace ECommerce.UI.UserInterface.TestingUi;
 
@@ -16,21 +15,14 @@ internal class CheckoutUi(ICartService cartService)
         Console.Clear();
 
         Dictionary<string, ItemDto> items = new();
-        foreach (var item in response.Data)
-        {
-            items.Add($"{item.Name} - {item.Artist} - ${item.Price}", item);
-        }
-        
+        foreach (var item in response.Data) items.Add($"{item.Name} - {item.Artist} - ${item.Price}", item);
+
         var options = DisplayMultiPrompt(items.Keys.ToList(), requireChoice: false);
 
         if (options.Count > 0)
-        {
             foreach (var option in options)
-            {
                 await cartService.AddToCartAsync(items[option]);
-            }
-        }
-        
+
         DisplaySuccess("Successfully added items to cart.");
         UiHelper.WaitForUser();
     }
@@ -42,7 +34,7 @@ internal class CheckoutUi(ICartService cartService)
             Console.Clear();
 
             var cart = await cartService.GetCartAsync();
-        
+
             DisplayMessage("Current cart:");
 
             if (cart.Count == 0)
@@ -51,7 +43,7 @@ internal class CheckoutUi(ICartService cartService)
                 UiHelper.WaitForUser();
                 return;
             }
-            
+
             DisplayRows(BuildItemDtoRenderable(cart));
 
             var option = DisplayMenu<CheckoutMenu>();
@@ -72,24 +64,18 @@ internal class CheckoutUi(ICartService cartService)
             }
         }
     }
-    
+
     private async Task RemoveItemsAsync(List<ItemDto> items)
     {
         var itemList = BuildItemDtoStringList(items);
         Dictionary<string, ItemDto> itemDictionary = new();
 
-        for (var i = 0; i < items.Count; i++)
-        {
-            itemDictionary.Add(itemList[i], items[i]);
-        }
-        
-        var options = DisplayMultiPrompt(itemDictionary.Keys.ToList(), title:"Please choose the item(s) to remove:" ,requireChoice: false);
+        for (var i = 0; i < items.Count; i++) itemDictionary.Add(itemList[i], items[i]);
 
-        foreach (var option in options)
-        {
-            await cartService.RemoveFromCartAsync(itemDictionary[option].ItemId);
-        }
-        
+        var options = DisplayMultiPrompt(itemDictionary.Keys.ToList(), "Please choose the item(s) to remove:", false);
+
+        foreach (var option in options) await cartService.RemoveFromCartAsync(itemDictionary[option].ItemId);
+
         DisplaySuccess("Successfully removed items from cart.");
         UiHelper.WaitForUser();
     }
@@ -105,7 +91,7 @@ internal class CheckoutUi(ICartService cartService)
         {
             DisplaySuccess("Deletion was cancelled.");
         }
-        
+
         UiHelper.WaitForUser();
     }
 
@@ -113,31 +99,31 @@ internal class CheckoutUi(ICartService cartService)
     {
         const string fakeCardDetails = "************1112, expires: 12/2027";
         const string fakeEmailAddress = "******@gmail.com";
-        
+
         Console.Clear();
-        DisplayWarning("No checkout process has currently been built, this is only a replication of what a checkout process might look like after development. Checking out will clear your cart afterwards.");
+        DisplayWarning(
+            "No checkout process has currently been built, this is only a replication of what a checkout process might look like after development. Checking out will clear your cart afterwards.");
 
         if (await AnsiConsole.ConfirmAsync($"Would you like to checkout with the card: {fakeCardDetails}?"))
         {
             //await cartService.CheckoutCart(CardDetails card)
-            
+
             cartService.ClearCart();
-            
-            DisplaySuccess($"Cart was successfully checked out, please check for an order confirmation email sent to your email: {fakeEmailAddress}");
+
+            DisplaySuccess(
+                $"Cart was successfully checked out, please check for an order confirmation email sent to your email: {fakeEmailAddress}");
         }
-        
+
         UiHelper.WaitForUser();
     }
-    
+
     //------- Helper Methods -------
     private List<IRenderable> BuildItemDtoRenderable(List<ItemDto> items)
     {
         List<IRenderable> iRenderables = [];
-        
+
         foreach (var item in items)
-        {
             iRenderables.Add(new Markup($"[{White}]{item.Name} - {item.Artist}[/][{Grey}] - {item.Price}[/]"));
-        }
 
         return iRenderables;
     }
@@ -147,9 +133,7 @@ internal class CheckoutUi(ICartService cartService)
         List<string> itemsAsStrings = [];
 
         foreach (var item in items)
-        {
             itemsAsStrings.Add($"[{White}]{item.Name} - {item.Artist}[/][{Grey}] - {item.Price}[/]");
-        }
 
         return itemsAsStrings;
     }

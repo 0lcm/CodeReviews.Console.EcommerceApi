@@ -9,7 +9,7 @@ namespace ECommerce.UI.Services;
 public class CartService : ICartService
 {
     private readonly string _cartPath = Path.Combine(AppSettings.AppDataPath, "userCart.json");
-    
+
     public async Task AddToCartAsync(ItemDto item)
     {
         var cart = await GetCartAsync();
@@ -21,7 +21,7 @@ public class CartService : ICartService
     {
         if (!File.Exists(_cartPath))
             return new List<ItemDto>();
-        
+
         var json = await File.ReadAllTextAsync(_cartPath);
         return JsonSerializer.Deserialize<List<ItemDto>>(json, Utils.GetJsonSerializerOptions()) ?? new List<ItemDto>();
     }
@@ -43,7 +43,7 @@ public class CartService : ICartService
     {
         var directory = Path.GetDirectoryName(_cartPath);
         Directory.CreateDirectory(directory!);
-        
+
         var json = JsonSerializer.Serialize(items, Utils.GetJsonSerializerOptions());
         await File.WriteAllTextAsync(_cartPath, json);
     }

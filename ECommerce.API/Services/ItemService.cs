@@ -14,9 +14,9 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
         foreach (var tagDto in itemDto.Tags)
         {
             var existingTag = await tagRepo.GetTagByName(tagDto.TagName);
-            tags.Add(existingTag ?? new Tag{TagName = tagDto.TagName});
+            tags.Add(existingTag ?? new Tag { TagName = tagDto.TagName });
         }
-        
+
         var item = new Item
         {
             Format = itemDto.Format,
@@ -25,7 +25,7 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
             Artist = itemDto.Artist,
             Genre = itemDto.Genre,
             Tags = tags,
-            Price = itemDto.Price,
+            Price = itemDto.Price
         };
 
         await repo.PostItemAsync(item);
@@ -36,16 +36,12 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
         var query = repo.GetItems();
 
         if (!string.IsNullOrEmpty(paginationParams.SearchTerm))
-        {
             query = query.Where(i => i.Name.ToLower().Contains(paginationParams.SearchTerm.ToLower())
-            ||  i.Artist.ToLower().Contains(paginationParams.SearchTerm.ToLower()));
-        }
+                                     || i.Artist.ToLower().Contains(paginationParams.SearchTerm.ToLower()));
 
         if (!string.IsNullOrEmpty(paginationParams.Genre))
-        {
             query = query.Where(i => i.Genre.ToLower() == paginationParams.Genre.ToLower());
-        }
-        
+
         var totalRecords = await query.CountAsync();
         var items = await query
             .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
@@ -59,10 +55,10 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
                 Name = i.Name,
                 Genre = i.Genre,
                 Price = i.Price,
-                Tags = i.Tags.Select(t => new TagDto{TagName = t.TagName}).ToList(),
+                Tags = i.Tags.Select(t => new TagDto { TagName = t.TagName }).ToList()
             })
             .ToListAsync();
-        
+
         return new PagedResponse<ItemDto>(items, paginationParams.PageNumber, paginationParams.PageSize, totalRecords);
     }
 
@@ -79,12 +75,12 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
             Name = item.Name,
             Genre = item.Genre,
             Price = item.Price,
-            Tags = item.Tags.Select(t => new TagDto { TagName = t.TagName }).ToList(),
+            Tags = item.Tags.Select(t => new TagDto { TagName = t.TagName }).ToList()
         };
     }
 
     /// <summary>
-    /// Deletes an item by ID
+    ///     Deletes an item by ID
     /// </summary>
     /// <param name="itemId"></param>
     /// <returns>True after a successful deletion, false upon an unsuccessful attempt, or null upon a NotFound error.</returns>

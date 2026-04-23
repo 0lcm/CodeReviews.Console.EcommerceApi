@@ -10,7 +10,7 @@ internal class TestingUi(ProductTestUi testingUi, CheckoutUi checkoutUi)
         while (true)
         {
             Console.Clear();
-            
+
             var option = DisplayMenu<TestingMenuOption>();
 
             switch (option)

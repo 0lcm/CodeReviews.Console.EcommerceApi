@@ -19,11 +19,8 @@ public class ItemsController(IItemService itemService) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PagedResponse<Item>>> GetItemsAsync([FromQuery] PaginationParams paginationParams)
     {
-        var pagedResponse = await  itemService.GetItemsAsync(paginationParams);
-        if (pagedResponse.TotalRecords == 0)
-        {
-            return NotFound();
-        }
+        var pagedResponse = await itemService.GetItemsAsync(paginationParams);
+        if (pagedResponse.TotalRecords == 0) return NotFound();
         return Ok(pagedResponse);
     }
 
@@ -31,7 +28,7 @@ public class ItemsController(IItemService itemService) : ControllerBase
     public async Task<ActionResult<ItemDto>> GetItemByIdAsync(int id)
     {
         var itemDto = await itemService.GetItemByIdAsync(id);
-        
+
         return itemDto is null ? NotFound() : Ok(itemDto);
     }
 
@@ -43,7 +40,7 @@ public class ItemsController(IItemService itemService) : ControllerBase
             return NotFound();
         if (success is false)
             return StatusCode(StatusCodes.Status500InternalServerError);
-        
+
         return NoContent();
     }
 }

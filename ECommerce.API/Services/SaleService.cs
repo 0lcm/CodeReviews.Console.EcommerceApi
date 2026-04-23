@@ -8,7 +8,7 @@ namespace ECommerce.API.Services;
 public class SaleService(ISaleRepository repo, IItemRepository itemRepo) : ISaleService
 {
     /// <summary>
-    /// Posts a sale async
+    ///     Posts a sale async
     /// </summary>
     /// <returns>True upon a successful post, false upon an unsuccessful post, and null upon a NotFound error.</returns>
     public async Task<bool?> PostSaleAsync(List<CreateSaleItemDto> saleItems)
@@ -23,13 +23,13 @@ public class SaleService(ISaleRepository repo, IItemRepository itemRepo) : ISale
             soldItems.Add(new SaleItem
             {
                 Item = item,
-                Quantity = saleItemDto.Quantity,
+                Quantity = saleItemDto.Quantity
             });
         }
 
         var sale = new Sale
         {
-            SoldItems = soldItems,
+            SoldItems = soldItems
         };
 
         try
@@ -60,14 +60,14 @@ public class SaleService(ISaleRepository repo, IItemRepository itemRepo) : ISale
                     {
                         ItemId = si.Item.ItemId,
                         Format = si.Item.Format,
-                        Type =  si.Item.Type,
+                        Type = si.Item.Type,
                         Name = si.Item.Name,
-                        Artist =  si.Item.Artist,
+                        Artist = si.Item.Artist,
                         Genre = si.Item.Genre,
                         Price = si.Item.Price,
-                        Tags = si.Item.Tags.Select(t => new TagDto{ TagName = t.TagName}).ToList(),
+                        Tags = si.Item.Tags.Select(t => new TagDto { TagName = t.TagName }).ToList()
                     }
-                }).ToList(),
+                }).ToList()
             }).ToListAsync();
 
         return new PagedResponse<SaleDto>
@@ -75,10 +75,12 @@ public class SaleService(ISaleRepository repo, IItemRepository itemRepo) : ISale
     }
 
     /// <summary>
-    /// Deletes a sale asynchronously by ID
+    ///     Deletes a sale asynchronously by ID
     /// </summary>
-    /// <returns>True upon a successful deletion, false upon an unsuccessful deletion attempt,
-    /// or null upon a NotFound exception</returns>
+    /// <returns>
+    ///     True upon a successful deletion, false upon an unsuccessful deletion attempt,
+    ///     or null upon a NotFound exception
+    /// </returns>
     public async Task<bool?> DeleteSaleByIdAsync(int saleId)
     {
         var sale = await repo.GetSaleByIdAsync(saleId);

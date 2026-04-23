@@ -12,9 +12,7 @@ public class TagService(ITagRepository repo) : ITagService
         var query = repo.GetTags();
 
         if (!string.IsNullOrEmpty(paginationParams.SearchTerm))
-        {
             query = query.Where(t => t.TagName.ToLower().Contains(paginationParams.SearchTerm.ToLower()));
-        }
 
         var totalRecords = await query.CountAsync();
         var tags = await query
@@ -24,7 +22,7 @@ public class TagService(ITagRepository repo) : ITagService
             {
                 TagName = t.TagName
             }).ToListAsync();
-        
+
         return new PagedResponse<TagDto>(tags, paginationParams.PageNumber, paginationParams.PageSize, totalRecords);
     }
 
@@ -36,11 +34,8 @@ public class TagService(ITagRepository repo) : ITagService
 
     public async Task PostTagAsync(CreateTagDto tagDto)
     {
-        if (await repo.GetTagByName(tagDto.TagName) is not null)
-        {
-            return;
-        }
-        
+        if (await repo.GetTagByName(tagDto.TagName) is not null) return;
+
         var tag = new Tag
         {
             TagName = tagDto.TagName
@@ -50,10 +45,12 @@ public class TagService(ITagRepository repo) : ITagService
     }
 
     /// <summary>
-    /// Deletes a tag asynchronously
+    ///     Deletes a tag asynchronously
     /// </summary>
-    /// <returns>true upon a successful deletion, false upon an unsuccessful attempt, and null
-    /// upon a NotFound exception.</returns>
+    /// <returns>
+    ///     true upon a successful deletion, false upon an unsuccessful attempt, and null
+    ///     upon a NotFound exception.
+    /// </returns>
     public async Task<bool?> DeleteTagByIdAsync(int id)
     {
         var tag = await repo.GetTagById(id);

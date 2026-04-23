@@ -1,6 +1,7 @@
 ﻿using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
 using ECommerce.UI.Interfaces;
+using Spectre.Console;
 using static ECommerce.UI.Helpers.DisplayHelper;
 
 namespace ECommerce.UI.UserInterface.TestingUi;
@@ -47,6 +48,51 @@ internal class ProductTestUi(IItemService itemService, CheckoutUi checkoutUi)
                 UiHelper.DisplayCaughtException(ex);
                 return;
             }
+        }
+    }
+    
+    internal async Task SearchProducts()
+    {
+        while (true)
+        {
+            Console.Clear();
+            
+            List<string> enumNames = Enum.GetNames<SearchController>().ToList();
+            var options = DisplayMultiPrompt(enumNames, requireChoice: false);
+
+            List<SearchController> selectedFilters;
+            try
+            {
+                selectedFilters = options
+                    .Select(s => (SearchController)Enum.Parse<SearchController>(s))
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                DisplayWarning("Please select to either search by a given search term, or filter by genre.");
+                UiHelper.WaitForUser();
+                continue;
+            }
+
+            string? searchTerm = null;
+            string? searchGenre = null;
+
+            if (selectedFilters.Contains(SearchController.SearchByTerm))
+            {
+                Console.Clear();
+                searchTerm = DisplayQuestion("Please enter a term to search for:");
+            }
+
+            if (selectedFilters.Contains(SearchController.FilterByGenre))
+            {
+                Console.Clear();
+                searchGenre = DisplayQuestion("Please enter a genre to filter by:");
+            }
+
+            await ReviewProductsMenu(searchTerm, searchGenre);
+
+            if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))
+                return;
         }
     }
 }

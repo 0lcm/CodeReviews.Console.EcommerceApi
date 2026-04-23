@@ -19,7 +19,7 @@ internal class TestingUi(ProductTestUi testingUi)
                     await testingUi.ReviewProductsMenu();
                     break;
                 case TestingMenuOption.SearchProducts:
-                    //TODO add a call to the search products method
+                    await testingUi.SearchProducts();
                     break;
                 case TestingMenuOption.Checkout:
                     //TODO add a call to the checkout method

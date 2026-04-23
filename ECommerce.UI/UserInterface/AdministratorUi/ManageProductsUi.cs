@@ -85,7 +85,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
             Console.Clear();
             
             List<string> enumNames = Enum.GetNames<SearchController>().ToList();
-            var options = DisplayMultiPrompt(enumNames);
+            var options = DisplayMultiPrompt(enumNames, requireChoice: false);
 
             List<SearchController> selectedFilters;
             try

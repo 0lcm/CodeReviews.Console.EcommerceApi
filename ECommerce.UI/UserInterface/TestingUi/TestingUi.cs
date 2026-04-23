@@ -3,7 +3,7 @@ using static ECommerce.UI.Helpers.DisplayHelper;
 
 namespace ECommerce.UI.UserInterface.TestingUi;
 
-internal class TestingUi(ProductTestUi testingUi)
+internal class TestingUi(ProductTestUi testingUi, CheckoutUi checkoutUi)
 {
     internal async Task TestingMenu()
     {
@@ -22,7 +22,7 @@ internal class TestingUi(ProductTestUi testingUi)
                     await testingUi.SearchProducts();
                     break;
                 case TestingMenuOption.Checkout:
-                    //TODO add a call to the checkout method
+                    await checkoutUi.CheckoutMenu();
                     break;
                 case TestingMenuOption.ExitTestingEnvironment:
                     return;

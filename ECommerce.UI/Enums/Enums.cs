@@ -65,3 +65,11 @@ internal enum PaginationControllerWithAddToCart
     AddToCart,
     Back
 }
+
+internal enum CheckoutMenu
+{
+    CheckoutItems,
+    RemoveItem,
+    ClearAllItems,
+    Back
+}

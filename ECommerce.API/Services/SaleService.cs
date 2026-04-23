@@ -65,7 +65,7 @@ public class SaleService(ISaleRepository repo, IItemRepository itemRepo) : ISale
                         Artist =  si.Item.Artist,
                         Genre = si.Item.Genre,
                         Price = si.Item.Price,
-                        Tags = si.Item.Tags.Select(t => new TagDto{TagName = t.TagName}).ToList(),
+                        Tags = si.Item.Tags.Select(t => new TagDto{ TagName = t.TagName}).ToList(),
                     }
                 }).ToList(),
             }).ToListAsync();

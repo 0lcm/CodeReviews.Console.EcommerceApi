@@ -10,7 +10,7 @@ public class TagRepository(ApiDbContext db) : ITagRepository
     public IQueryable<Tag> GetTags()
     {
         return db.Tags
-            .OrderBy(t => t.TagName)
+            .OrderBy(t => t.TagId)
             .AsQueryable();
     }
     

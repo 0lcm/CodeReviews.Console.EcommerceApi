@@ -66,6 +66,23 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
         return new PagedResponse<ItemDto>(items, paginationParams.PageNumber, paginationParams.PageSize, totalRecords);
     }
 
+    public async Task<ItemDto?> GetItemByIdAsync(int id)
+    {
+        var item = await repo.GetItemByIdAsync(id);
+        if (item is null) return null;
+
+        return new ItemDto
+        {
+            Format = item.Format,
+            Type = item.Type,
+            Artist = item.Artist,
+            Name = item.Name,
+            Genre = item.Genre,
+            Price = item.Price,
+            Tags = item.Tags.Select(t => new TagDto { TagName = t.TagName }).ToList(),
+        };
+    }
+
     /// <summary>
     /// Deletes an item by ID
     /// </summary>

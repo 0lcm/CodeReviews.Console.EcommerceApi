@@ -27,7 +27,13 @@ public class TagService(ITagRepository repo) : ITagService
         
         return new PagedResponse<TagDto>(tags, paginationParams.PageNumber, paginationParams.PageSize, totalRecords);
     }
-    
+
+    public async Task<int?> GetTagIdByName(string name)
+    {
+        var tag = await repo.GetTagByName(name);
+        return tag?.TagId;
+    }
+
     public async Task PostTagAsync(CreateTagDto tagDto)
     {
         if (await repo.GetTagByName(tagDto.TagName) is not null)

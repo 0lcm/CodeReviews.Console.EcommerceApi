@@ -54,7 +54,7 @@ namespace ECommerce.API.Data.Migrations
 
                     b.HasKey("ItemId");
 
-                    b.ToTable("Items");
+                    b.ToTable("Items", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.API.Models.Sale", b =>
@@ -76,7 +76,7 @@ namespace ECommerce.API.Data.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("Sales");
+                    b.ToTable("Sales", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.API.Models.SaleItem", b =>
@@ -94,7 +94,7 @@ namespace ECommerce.API.Data.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("SaleItem");
+                    b.ToTable("SaleItem", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.API.Models.Tag", b =>
@@ -115,7 +115,7 @@ namespace ECommerce.API.Data.Migrations
 
                     b.HasKey("TagId");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("ItemTag", b =>
@@ -130,7 +130,7 @@ namespace ECommerce.API.Data.Migrations
 
                     b.HasIndex("TagsTagId");
 
-                    b.ToTable("ItemTag");
+                    b.ToTable("ItemTag", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.API.Models.Sale", b =>

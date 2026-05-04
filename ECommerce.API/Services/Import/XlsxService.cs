@@ -1,21 +1,24 @@
 ﻿using ClosedXML.Excel;
-using ECommerce.Shared;
-using ECommerce.API.Interfaces;
+using ECommerce.API.Interfaces.Import;
 using ECommerce.API.Models;
+using ECommerce.Shared;
 
-namespace ECommerce.API.Services;
+namespace ECommerce.API.Services.Import;
 
 public class XlsxService(IConfiguration configuration) : IImportService
 {
-    private readonly string _filePath = Environment.ExpandEnvironmentVariables(configuration["Seeding:FilePath"] ?? throw new ArgumentNullException(nameof(configuration), message: "Could not find Seeding:FilePath in appSettings.json."));
-    
+    private readonly string _filePath = Environment.ExpandEnvironmentVariables(configuration["Seeding:FilePath"] ??
+                                                                               throw new ArgumentNullException(
+                                                                                   nameof(configuration),
+                                                                                   "Could not find Seeding:FilePath in appSettings.json."));
+
     public SeedData GetSeedData()
     {
         using var workbook = new XLWorkbook(_filePath);
-        
+
         var tags = GetTagsFromXlsx(workbook);
         var items = GetItemsFromXlsx(tags, workbook);
-        var sales  = GetSalesFromXlsx(items, workbook);
+        var sales = GetSalesFromXlsx(items, workbook);
 
         return new SeedData
         {
@@ -24,37 +27,37 @@ public class XlsxService(IConfiguration configuration) : IImportService
             Sales = sales
         };
     }
-    
+
     //------ Extractor Methods -------
     private List<Tag> GetTagsFromXlsx(XLWorkbook workbook)
     {
         var range = GetRange(workbook, "Tags");
         var headers = GetHeaderDictionary(range);
         var rows = range.RowsUsed().Skip(1);
-        
+
         return rows.Select(row => new Tag
         {
             TagName = row.Cell(headers["name"]).GetValue<string>()
         }).ToList();
     }
-    
+
     private List<Item> GetItemsFromXlsx(List<Tag> tags, XLWorkbook workbook)
     {
         var range = GetRange(workbook, "Items");
         var headers = GetHeaderDictionary(range);
 
         var rows = range.RowsUsed().Skip(1);
-        
+
         return rows.Select(row =>
         {
             var tagNames = row.Cell(headers["tags"]).GetValue<string>()
                 .Split(',')
                 .Select(n => n.Trim());
-            
+
             var matchedTags = tags
                 .Where(t => tagNames.Contains(t.TagName))
                 .ToList();
-            
+
             return new Item
             {
                 Name = row.Cell(headers["name"]).GetValue<string>(),
@@ -105,7 +108,8 @@ public class XlsxService(IConfiguration configuration) : IImportService
     private IXLRange GetRange(XLWorkbook workbook, string worksheetName)
     {
         var sheet = workbook.Worksheet(worksheetName);
-        return sheet.RangeUsed() ?? throw new InvalidOperationException($"Extracted a null range for worksheet name {worksheetName}");
+        return sheet.RangeUsed() ??
+               throw new InvalidOperationException($"Extracted a null range for worksheet name {worksheetName}");
     }
 
     private Dictionary<string, int> GetHeaderDictionary(IXLRange range)

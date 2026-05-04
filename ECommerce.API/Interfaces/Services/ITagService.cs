@@ -1,7 +1,7 @@
 ﻿using ECommerce.API.Models;
 using ECommerce.Shared.Models;
 
-namespace ECommerce.API.Interfaces;
+namespace ECommerce.API.Interfaces.Services;
 
 public interface ITagService
 {

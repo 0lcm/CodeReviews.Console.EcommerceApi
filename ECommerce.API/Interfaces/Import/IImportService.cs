@@ -1,6 +1,6 @@
 ﻿using ECommerce.API.Models;
 
-namespace ECommerce.API.Interfaces;
+namespace ECommerce.API.Interfaces.Import;
 
 public interface IImportService
 {

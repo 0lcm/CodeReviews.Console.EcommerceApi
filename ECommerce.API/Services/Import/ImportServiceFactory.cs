@@ -1,6 +1,6 @@
-﻿using ECommerce.API.Interfaces;
+﻿using ECommerce.API.Interfaces.Import;
 
-namespace ECommerce.API.Services;
+namespace ECommerce.API.Services.Import;
 
 public class ImportServiceFactory(IConfiguration configuration, IServiceProvider provider)
 {
@@ -8,7 +8,7 @@ public class ImportServiceFactory(IConfiguration configuration, IServiceProvider
     {
         var filePath = configuration["Seeding:FilePath"] ??
                        throw new ArgumentNullException(
-                           nameof(configuration), message: "Could not extract Seeding:FilePath from appSettings.json");
+                           nameof(configuration), "Could not extract Seeding:FilePath from appSettings.json");
         var extension = Path.GetExtension(filePath).ToLower();
 
         return extension switch

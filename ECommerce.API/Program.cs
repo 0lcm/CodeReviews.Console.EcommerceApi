@@ -12,10 +12,6 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Configuration
-    .SetBasePath(AppContext.BaseDirectory)
-    .AddJsonFile("appSettings.json", false, true);
-
 builder.Services.AddSingleton<SoftDeleteInterceptor>();
 
 builder.Services.AddDbContext<ApiDbContext>((sp, options) =>
@@ -32,9 +28,6 @@ builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 builder.Services.AddScoped<ISaleService, SaleService>();
 
-builder.Services.AddScoped<XlsxService>();
-builder.Services.AddScoped<ImportServiceFactory>();
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -46,7 +39,6 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
-    var importFactory = scope.ServiceProvider.GetRequiredService<ImportServiceFactory>();
 
     var dbDirectory = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -57,7 +49,7 @@ using (var scope = app.Services.CreateScope())
 
     await db.Database.MigrateAsync();
 
-    if (isFirstRun) await DbSeeder.SeedDatabaseAsync(db, importFactory);
+    if (isFirstRun) await DbSeeder.SeedItemsAsync(db);
 }
 
 app.UseHttpsRedirection();

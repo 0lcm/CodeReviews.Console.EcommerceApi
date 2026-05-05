@@ -1,5 +1,4 @@
-﻿using ECommerce.API.Interfaces.Repositories;
-using ECommerce.API.Interfaces.Services;
+﻿using ECommerce.API.Interfaces;
 using ECommerce.API.Models;
 using ECommerce.Shared.Models;
 using Microsoft.EntityFrameworkCore;

@@ -1,6 +1,6 @@
 ﻿using ECommerce.API.Models;
 
-namespace ECommerce.API.Interfaces.Repositories;
+namespace ECommerce.API.Interfaces;
 
 public interface ITagRepository
 {

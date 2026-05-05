@@ -1,10 +1,8 @@
 using System.Text.Json.Serialization;
 using ECommerce.API.Data;
-using ECommerce.API.Interfaces.Repositories;
-using ECommerce.API.Interfaces.Services;
+using ECommerce.API.Interfaces;
 using ECommerce.API.Repositories;
 using ECommerce.API.Services;
-using ECommerce.API.Services.Import;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

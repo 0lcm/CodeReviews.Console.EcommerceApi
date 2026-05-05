@@ -1,7 +1,7 @@
 ﻿using ECommerce.API.Models;
 using ECommerce.Shared.Models;
 
-namespace ECommerce.API.Interfaces.Services;
+namespace ECommerce.API.Interfaces;
 
 public interface ISaleService
 {

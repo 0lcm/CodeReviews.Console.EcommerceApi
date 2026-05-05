@@ -5,9 +5,22 @@ namespace ECommerce.UI.Services;
 
 public class VerificationService : IVerificationService
 {
-    public bool TryParseDecimal(string input, out decimal decimalValue)
+    public bool TryValidateItemPrice(string input, out decimal itemPrice, out string? errorMessage)
     {
-        return decimal.TryParse(input, out decimalValue);
+        if (!decimal.TryParse(input, out itemPrice))
+        {
+            errorMessage = "Could not parse item price into a number.";
+            return false;
+        }
+        
+        if (itemPrice < 0)
+        {
+            errorMessage = "Item price cannot be a negative number.";
+            return false;
+        }
+        
+        errorMessage = null;
+        return true;
     }
 
     public bool TryParseValidQuantity(string quantity, out int parsedQuantity)

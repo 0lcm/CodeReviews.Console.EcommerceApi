@@ -179,9 +179,9 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
             var unparsedPrice = UiHelper.GetArgument("Please enter the item's price:");
             if (unparsedPrice is null) return;
 
-            if (!verificationService.TryParseDecimal(unparsedPrice, out price))
+            if (!verificationService.TryValidateItemPrice(unparsedPrice, out price, out var errorMessage))
             {
-                DisplayWarning("Please enter a valid number.");
+                DisplayWarning(errorMessage ?? "Please enter a valid price for this product.");
                 UiHelper.WaitForUser();
                 continue;
             }

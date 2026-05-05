@@ -16,7 +16,7 @@ public class TagRepository(ApiDbContext db) : ITagRepository
 
     public async Task<Tag?> GetTagByName(string name)
     {
-        return await db.Tags.FirstOrDefaultAsync(t => t.TagName.ToLower() == name.ToLower());
+        return await db.Tags.FirstOrDefaultAsync(t => t.TagName.ToLower().Trim() == name.ToLower().Trim());
     }
 
     public async Task<Tag?> GetTagById(int id)

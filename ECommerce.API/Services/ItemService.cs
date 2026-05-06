@@ -41,6 +41,9 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
 
         if (!string.IsNullOrEmpty(paginationParams.Genre))
             query = query.Where(i => i.Genre.ToLower() == paginationParams.Genre.ToLower());
+        
+        if (paginationParams.SearchTags.Count > 0)
+            query = query.Where(i => i.Tags.Any(t => paginationParams.SearchTags.Contains(t.TagName)));
 
         var totalRecords = await query.CountAsync();
         var items = await query

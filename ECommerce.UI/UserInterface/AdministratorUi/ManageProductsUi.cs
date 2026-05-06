@@ -1,4 +1,5 @@
 ﻿using ECommerce.Shared;
+using ECommerce.Shared.Models;
 using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
 using ECommerce.UI.Interfaces;
@@ -7,7 +8,7 @@ using static ECommerce.UI.Helpers.DisplayHelper;
 
 namespace ECommerce.UI.UserInterface.AdministratorUi;
 
-internal class ManageProductsUi(IItemService itemService, IVerificationService verificationService)
+internal class ManageProductsUi(IItemService itemService, IVerificationService verificationService, ManageProductTagsUi tagsMenu)
 {
     //------- Menu Methods -------
     internal async Task ManageProductsMenu()
@@ -43,15 +44,15 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
     /// </summary>
     /// <param name="searchTerm">optional search term to filter results</param>
     /// <param name="searchGenre">optional genre filter</param>
-    private async Task ReviewProductsMenu(string? searchTerm = null, string? searchGenre = null)
+    /// <param name="searchTags">options tag filter</param>
+    private async Task ReviewProductsMenu(string? searchTerm = null, string? searchGenre = null, List<TagDto>? searchTags = null)
     {
         var pageNumber = 1;
         while (true)
             try
             {
                 Console.Clear();
-                var response =
-                    await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre);
+                var response = await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre, tags: searchTags);
                 var iRenderable = UiHelper.BuildItemDtoRenderable(response);
 
 
@@ -93,7 +94,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                     .Select(s => Enum.Parse<SearchController>(s))
                     .ToList();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 DisplayWarning("Please select to either search by a given search term, or filter by genre.");
                 UiHelper.WaitForUser();
@@ -102,11 +103,31 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
 
             string? searchTerm = null;
             string? searchGenre = null;
+            List<TagDto>? searchTags = null;
 
             if (selectedFilters.Contains(SearchController.SearchByTerm))
             {
                 Console.Clear();
                 searchTerm = DisplayQuestion("Please enter a term to search for:");
+            }
+
+            if (selectedFilters.Contains(SearchController.FilterByTags))
+            {
+                switch (DisplayMenu<SearchControllerSubEnum>())
+                {
+                    case SearchControllerSubEnum.SearchForSpecificTag:
+                        searchTags = await tagsMenu.SearchTags(true);
+                        break;
+                    
+                    case SearchControllerSubEnum.BrowseAllTags:
+                        searchTags = await tagsMenu.ReviewTags(returnTagSelection: true);
+                        break;
+                    
+                    case SearchControllerSubEnum.Back:
+                        break;
+                }
+                
+                if (searchTags is null || searchTags.Count == 0) return;
             }
 
             if (selectedFilters.Contains(SearchController.FilterByGenre))
@@ -115,7 +136,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                 searchGenre = DisplayQuestion("Please enter a genre to filter by:");
             }
 
-            await ReviewProductsMenu(searchTerm, searchGenre);
+            await ReviewProductsMenu(searchTerm, searchGenre, searchTags);
 
             if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))
                 return;

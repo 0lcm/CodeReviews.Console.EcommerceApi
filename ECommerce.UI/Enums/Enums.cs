@@ -29,7 +29,16 @@ internal enum PaginationController
 internal enum SearchController
 {
     SearchByTerm,
-    FilterByGenre
+    FilterByTags,
+    FilterByGenre,
+}
+
+internal enum SearchControllerSubEnum
+{
+    
+    SearchForSpecificTag,
+    BrowseAllTags,
+    Back
 }
 
 internal enum ManageProductTagsMenu

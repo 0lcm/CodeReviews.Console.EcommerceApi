@@ -113,17 +113,17 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
 
             if (selectedFilters.Contains(SearchController.FilterByTags))
             {
-                switch (DisplayMenu<SearchControllerSubEnum>())
+                switch (DisplayMenu<SearchTagsController>())
                 {
-                    case SearchControllerSubEnum.SearchForSpecificTag:
+                    case SearchTagsController.SearchForSpecificTag:
                         searchTags = await tagsMenu.SearchTags(true);
                         break;
                     
-                    case SearchControllerSubEnum.BrowseAllTags:
+                    case SearchTagsController.BrowseAllTags:
                         searchTags = await tagsMenu.ReviewTags(returnTagSelection: true);
                         break;
                     
-                    case SearchControllerSubEnum.Back:
+                    case SearchTagsController.Back:
                         break;
                 }
                 
@@ -158,8 +158,28 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
         var genre = UiHelper.GetArgument("Please enter the genre:");
         if (genre is null) return;
 
-        var tags = UiHelper.GetArgument("Please enter any tags separated by commas:");
-        if (tags is null) return;
+        var tagOption = DisplayMenu<TagAdditionMethodForItem>();
+        List<TagDto>? selectedTags = null;
+
+        switch (tagOption)
+        {
+            case TagAdditionMethodForItem.SearchForAnExistingTag:
+                selectedTags = await tagsMenu.SearchTags(returnSearchTags: true);
+                break;
+            case TagAdditionMethodForItem.CreateNewTag:
+                var response = UiHelper.GetArgument("Please enter tag names separated by a ','");
+                if (response is null) return;
+                selectedTags = response.Split(',')
+                    .Select(name => new TagDto { TagName = name.Trim() })
+                    .ToList();
+                break;
+            case TagAdditionMethodForItem.CreateWithoutTags:
+                break;
+        }
+
+        string tags = selectedTags is not null
+            ? string.Join(", ", selectedTags.Select(t => t.TagName))
+            : string.Empty;
 
         while (true)
         {

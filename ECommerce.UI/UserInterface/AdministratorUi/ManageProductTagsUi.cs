@@ -98,16 +98,16 @@ internal class ManageProductTagsUi(ITagService tagService)
     {
         while (true)
         {
+            List<TagDto>? selectedTags = null;
             Console.Clear();
 
             var searchTerm = UiHelper.GetArgument("Please enter a term to search by:");
             if (searchTerm is null) return null;
 
-            var selectedTags = await ReviewTags(searchTerm, returnTagSelection: returnSearchTags);
-            if (returnSearchTags) return selectedTags;
+            selectedTags = await ReviewTags(searchTerm, returnTagSelection: returnSearchTags);
 
             if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))
-                return null;
+                return returnSearchTags ? selectedTags : null;
         }
     }
 

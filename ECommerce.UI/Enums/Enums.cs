@@ -33,12 +33,19 @@ internal enum SearchController
     FilterByGenre,
 }
 
-internal enum SearchControllerSubEnum
+internal enum SearchTagsController
 {
     
     SearchForSpecificTag,
     BrowseAllTags,
     Back
+}
+
+internal enum TagAdditionMethodForItem
+{
+    SearchForAnExistingTag,
+    CreateNewTag,
+    CreateWithoutTags
 }
 
 internal enum ManageProductTagsMenu

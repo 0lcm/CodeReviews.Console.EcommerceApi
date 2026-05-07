@@ -29,6 +29,14 @@ internal class DisplayHelper
         AnsiConsole.Write(rowsLayout);
     }
 
+    internal static void DisplayTable(Table table)
+    {
+        table.SimpleBorder();
+        table.BorderColor(Color.White);
+        
+        AnsiConsole.Write(table);
+    }
+
     internal static void DisplayInfo(string info, bool writeLine = true)
     {
         if (writeLine)

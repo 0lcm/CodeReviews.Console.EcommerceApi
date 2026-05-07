@@ -22,10 +22,10 @@ internal class ProductTestUi(IItemService itemService, CheckoutUi checkoutUi)
                 Console.Clear();
                 var response =
                     await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre);
-                var iRenderable = UiHelper.BuildItemDtoRenderable(response);
+                var table = UiHelper.BuildItemTable(response);
 
 
-                DisplayRows(iRenderable);
+                DisplayTable(table);
 
                 var option = DisplayMenu<PaginationControllerWithAddToCart>();
                 switch (option)

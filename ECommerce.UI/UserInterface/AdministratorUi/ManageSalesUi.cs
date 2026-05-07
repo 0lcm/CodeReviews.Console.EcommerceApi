@@ -42,10 +42,10 @@ internal class ManageSalesUi(ISaleService saleService, IVerificationService veri
             {
                 Console.Clear();
                 var response = await saleService.GetSalesAsync(pageNumber);
-                var iRenderable = UiHelper.BuildSaleDtoRenderable(response);
+                var table = UiHelper.BuildSaleTable(response);
 
 
-                DisplayRows(iRenderable);
+                DisplayTable(table);
 
                 var option = DisplayMenu<PaginationController>();
                 switch (option)

@@ -57,8 +57,8 @@ internal class ManageProductTagsUi(ITagService tagService)
 
                 if (!returnTagSelection)
                 {
-                    var iRenderable = _uiHelper.BuildTagDtoRenderable(response);
-                    DisplayRows(iRenderable);
+                    var table = _uiHelper.BuildTagTable(response);
+                    DisplayTable(table);
                 }
                 else
                 {

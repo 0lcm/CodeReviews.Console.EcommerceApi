@@ -53,10 +53,10 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
             {
                 Console.Clear();
                 var response = await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre, tags: searchTags);
-                var iRenderable = UiHelper.BuildItemDtoRenderable(response);
+                var table = UiHelper.BuildItemTable(response);
 
 
-                DisplayRows(iRenderable);
+                DisplayTable(table);
 
                 var option = DisplayMenu<PaginationController>();
                 switch (option)

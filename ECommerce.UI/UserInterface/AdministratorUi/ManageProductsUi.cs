@@ -58,7 +58,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
 
                 DisplayTable(table);
 
-                var option = DisplayMenu<PaginationController>();
+                var option = UiHelper.DisplayPaginationController(response.PageNumber, response.TotalPages);
                 switch (option)
                 {
                     case PaginationController.LastPage:

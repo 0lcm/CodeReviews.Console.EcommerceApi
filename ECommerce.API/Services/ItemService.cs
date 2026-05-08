@@ -46,6 +46,7 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
             query = query.Where(i => i.Tags.Any(t => paginationParams.SearchTags.Contains(t.TagName)));
 
         var totalRecords = await query.CountAsync();
+        var totalPages =  (int)Math.Ceiling((double)totalRecords / paginationParams.PageSize);
         var items = await query
             .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
             .Take(paginationParams.PageSize)
@@ -62,7 +63,7 @@ public class ItemService(IItemRepository repo, ITagRepository tagRepo) : IItemSe
             })
             .ToListAsync();
 
-        return new PagedResponse<ItemDto>(items, paginationParams.PageNumber, paginationParams.PageSize, totalRecords);
+        return new PagedResponse<ItemDto>(items, paginationParams.PageNumber, paginationParams.PageSize, totalRecords, totalPages);
     }
 
     public async Task<ItemDto?> GetItemByIdAsync(int id)

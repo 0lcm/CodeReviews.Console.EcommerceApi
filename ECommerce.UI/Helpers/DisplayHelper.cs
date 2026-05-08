@@ -80,16 +80,18 @@ internal class DisplayHelper
     //------- Menus & Prompts -------
     internal static T DisplayMenu<T>(string? title = null) where T : Enum
     {
-        var menuChoice = AnsiConsole.Prompt(
+        return DisplayMenu(Enum.GetValues(typeof(T)).Cast<T>(), title);
+    }
+
+    internal static T DisplayMenu<T>(IEnumerable<T> choices, string? title = null) where T : Enum
+    {
+        return AnsiConsole.Prompt(
             new SelectionPrompt<T>()
                 .Title(title ?? "Please Select An Option:")
                 .HighlightStyle(Style.Parse("darkviolet"))
-                .AddChoices(Enum.GetValues(typeof(T)).Cast<T>())
+                .AddChoices(choices)
                 .UseConverter(e => e.ToDisplayString())
         );
-
-
-        return menuChoice;
     }
 
     internal static string DisplayPrompt(List<string> choiceList, string? title = null)

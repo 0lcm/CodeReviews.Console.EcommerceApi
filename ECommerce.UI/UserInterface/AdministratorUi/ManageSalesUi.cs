@@ -47,7 +47,7 @@ internal class ManageSalesUi(ISaleService saleService, IVerificationService veri
 
                 DisplayTable(table);
 
-                var option = DisplayMenu<PaginationController>();
+                var option = UiHelper.DisplayPaginationController(response.PageNumber, response.TotalPages);
                 switch (option)
                 {
                     case PaginationController.LastPage:

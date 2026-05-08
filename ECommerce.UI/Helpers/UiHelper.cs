@@ -1,4 +1,5 @@
 ﻿using ECommerce.Shared.Models;
+using ECommerce.UI.Enums;
 using ECommerce.UI.Interfaces;
 using Spectre.Console;
 using Spectre.Console.Rendering;
@@ -135,5 +136,38 @@ internal class UiHelper(ITagService tagService)
         var value = DisplayQuestion(prompt);
 
         return string.Equals(value, backOption, StringComparison.OrdinalIgnoreCase) ? null : value;
+    }
+
+    /// <summary>
+    /// Displays a pagination menu, handling edge cases for first and last pages
+    /// </summary>
+    /// <param name="pageNumber"></param>
+    /// <param name="totalPages"></param>
+    /// <returns>The chosen PaginationController selection</returns>
+    internal static PaginationController DisplayPaginationController(int pageNumber, int totalPages)
+    {
+        IEnumerable<PaginationController> options;
+        if (pageNumber >= totalPages && totalPages > 1)
+        {
+            options = Enum.GetValues(typeof(PaginationController))
+                .Cast<PaginationController>()
+                .Where(p => p != PaginationController.NextPage)
+                .ToList();
+        }
+        else if (pageNumber <= 1)
+        {
+            options = Enum.GetValues(typeof(PaginationController))
+                .Cast<PaginationController>()
+                .Where(p => p != PaginationController.LastPage)
+                .ToList();
+        }
+        else
+        {
+            options = Enum.GetValues(typeof(PaginationController))
+                .Cast<PaginationController>()
+                .ToList();
+        }
+
+        return DisplayMenu(options);
     }
 }

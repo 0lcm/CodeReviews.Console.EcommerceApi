@@ -69,7 +69,7 @@ internal class ManageProductTagsUi(ITagService tagService)
                     return selectedTags;
                 }
 
-                var option = DisplayMenu<PaginationController>();
+                var option = UiHelper.DisplayPaginationController(response.PageNumber, response.TotalPages);
                 switch (option)
                 {
                     case PaginationController.LastPage:

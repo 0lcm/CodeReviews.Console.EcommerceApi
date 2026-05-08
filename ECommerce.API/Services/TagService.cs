@@ -15,6 +15,7 @@ public class TagService(ITagRepository repo) : ITagService
             query = query.Where(t => t.TagName.ToLower().Contains(paginationParams.SearchTerm.ToLower()));
 
         var totalRecords = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)totalRecords / paginationParams.PageSize);
         var tags = await query
             .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
             .Take(paginationParams.PageSize)
@@ -23,7 +24,7 @@ public class TagService(ITagRepository repo) : ITagService
                 TagName = t.TagName
             }).ToListAsync();
 
-        return new PagedResponse<TagDto>(tags, paginationParams.PageNumber, paginationParams.PageSize, totalRecords);
+        return new PagedResponse<TagDto>(tags, paginationParams.PageNumber, paginationParams.PageSize, totalRecords, totalPages);
     }
 
     public async Task<int?> GetTagIdByName(string name)

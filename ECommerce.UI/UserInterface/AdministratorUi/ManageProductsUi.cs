@@ -209,41 +209,11 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
         if (string.IsNullOrWhiteSpace(tags)) tags = "No Tags";
         enteredDetails.Append($"Tags: {tags} ");
 
-        while (true)
-        {
-            const string prompt = "Please enter an item format:";
-            const string instructions = "Valid item formats are only: Vinyl, Cd, or Digital.";
-            var itemFormat = UiHelper.GetArgument(prompt, $"{instructions}\n{enteredDetails}");
-            if (itemFormat is null) return;
-            enteredDetails.Append($"Format: {itemFormat} ");
-
-            if (!verificationService.TryParseItemFormat(itemFormat, out format))
-            {
-                DisplayWarning("Please choose either: vinyl, cd, or digital format.");
-                UiHelper.WaitForUser();
-                continue;
-            }
-
-            break;
-        }
-
-        while (true)
-        {
-            const string prompt = "Please enter an item type:";
-            const string instructions = "Valid item types are only: Album, Single, or Mixtape";
-            var itemType = UiHelper.GetArgument(prompt, $"{instructions}\n{enteredDetails}");
-            if (itemType is null) return;
-            enteredDetails.Append($"Type: {itemType} ");
-
-            if (!verificationService.TryParseItemType(itemType, out type))
-            {
-                DisplayWarning("Please choose either: album, single, or mixtape type.");
-                UiHelper.WaitForUser();
-                continue;
-            }
-
-            break;
-        }
+        format = DisplayMenu<ItemFormat>();
+        enteredDetails.Append($"Format: {format} ");
+            
+        type = DisplayMenu<ItemType>();
+        enteredDetails.Append($"Type: {type} ");
 
         while (true)
         {

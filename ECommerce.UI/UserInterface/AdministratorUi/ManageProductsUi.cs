@@ -45,7 +45,9 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
     /// <param name="searchTerm">optional search term to filter results</param>
     /// <param name="searchGenre">optional genre filter</param>
     /// <param name="searchTags">options tag filter</param>
-    private async Task ReviewProductsMenu(string? searchTerm = null, string? searchGenre = null, List<TagDto>? searchTags = null)
+    /// <param name="returnSelectedProduct">decides if a list of selected products should be returned</param>
+    /// <returns>A selected product if returnSelectedProduct is set to true, or null if set to false</returns>
+    private async Task<ItemDto?> ReviewProductsMenu(string? searchTerm = null, string? searchGenre = null, List<TagDto>? searchTags = null, bool returnSelectedProduct = false)
     {
         var pageNumber = 1;
         while (true)
@@ -53,10 +55,23 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
             {
                 Console.Clear();
                 var response = await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre, tags: searchTags);
-                var table = UiHelper.BuildItemTable(response);
 
+                if (!returnSelectedProduct)
+                {
+                    var table = UiHelper.BuildItemTable(response);
+                    DisplayTable(table);
+                }
+                else
+                {
+                    var dictionary = new Dictionary<string, ItemDto>();
+                    foreach (var item in response.Data)
+                    {
+                        dictionary.Add($"{item.Name} - {item.Artist}", item);
+                    }
 
-                DisplayTable(table);
+                    var selection = DisplayPrompt(dictionary.Keys.ToList());
+                    return dictionary[selection];
+                }
 
                 var option = UiHelper.DisplayPaginationController(response.PageNumber, response.TotalPages);
                 switch (option)
@@ -68,17 +83,22 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                         pageNumber += 1;
                         break;
                     case PaginationController.Back:
-                        return;
+                        return null;
                 }
             }
             catch (HttpRequestException ex)
             {
                 UiHelper.DisplayCaughtException(ex);
-                return;
+                return null;
             }
     }
 
-    private async Task SearchProducts()
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="returnProduct">Decides if the method should return the selected product or not</param>
+    /// <returns>The selected product, or null if returnProduct is set to false</returns>
+    private async Task<ItemDto?> SearchProducts(bool returnProduct = false)
     {
         while (true)
         {
@@ -127,7 +147,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                         break;
                 }
                 
-                if (searchTags is null || searchTags.Count == 0) return;
+                if (searchTags is null || searchTags.Count == 0) return null;
             }
 
             if (selectedFilters.Contains(SearchController.FilterByGenre))
@@ -136,10 +156,11 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                 searchGenre = DisplayQuestion("Please enter a genre to filter by:");
             }
 
-            await ReviewProductsMenu(searchTerm, searchGenre, searchTags);
+            var item = await ReviewProductsMenu(searchTerm, searchGenre, searchTags, returnProduct);
+            if (returnProduct) return item;
 
             if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))
-                return;
+                return null;
         }
     }
 
@@ -246,23 +267,14 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
     {
         while (true)
         {
-            int id;
             try
             {
-                var unparsedId = UiHelper.GetArgument("Please enter the ID of the product to delete:");
-                if (string.IsNullOrWhiteSpace(unparsedId)) throw new ArgumentNullException();
-
-                var success = int.TryParse(unparsedId, out id);
-                if (!success)
-                {
-                    DisplayWarning("Please enter a valid product ID containing only numbers.");
-                    UiHelper.WaitForUser();
-                    continue;
-                }
-
+                var item = await SearchProducts(returnProduct: true);
+                if (item is null) return;
+                
                 if (await AnsiConsole.ConfirmAsync("Are you sure you want to delete this item?"))
                 {
-                    await itemService.DeleteItemAsync(id);
+                    await itemService.DeleteItemAsync(item.ItemId);
                     DisplaySuccess("Successfully deleted product.");
                 }
                 else
@@ -271,6 +283,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                 }
 
                 UiHelper.WaitForUser();
+                return;
             }
             catch (Exception ex)
             {

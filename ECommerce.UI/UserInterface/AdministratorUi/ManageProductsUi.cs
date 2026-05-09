@@ -1,4 +1,5 @@
-﻿using ECommerce.Shared;
+﻿using System.Text;
+using ECommerce.Shared;
 using ECommerce.Shared.Models;
 using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
@@ -169,15 +170,19 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
         ItemFormat format;
         ItemType type;
         decimal price;
+        var enteredDetails = new StringBuilder();
 
         var title = UiHelper.GetArgument("Please enter the item title:");
         if (title is null) return;
+        enteredDetails.Append($"Title: {title} ");
 
-        var artist = UiHelper.GetArgument("Please enter the artist's name:");
+        var artist = UiHelper.GetArgument("Please enter the artist's name:", enteredDetails.ToString());
         if (artist is null) return;
+        enteredDetails.Append($"Artist: {artist} ");
 
-        var genre = UiHelper.GetArgument("Please enter the genre:");
+        var genre = UiHelper.GetArgument("Please enter the genre:", enteredDetails.ToString());
         if (genre is null) return;
+        enteredDetails.Append($"Genre: {genre} ");
 
         var tagOption = DisplayMenu<TagAdditionMethodForItem>();
         List<TagDto>? selectedTags = null;
@@ -201,13 +206,16 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
         string tags = selectedTags is not null
             ? string.Join(", ", selectedTags.Select(t => t.TagName))
             : string.Empty;
+        if (string.IsNullOrWhiteSpace(tags)) tags = "No Tags";
+        enteredDetails.Append($"Tags: {tags} ");
 
         while (true)
         {
             const string prompt = "Please enter an item format:";
             const string instructions = "Valid item formats are only: Vinyl, Cd, or Digital.";
-            var itemFormat = UiHelper.GetArgument(prompt, instructions);
+            var itemFormat = UiHelper.GetArgument(prompt, $"{instructions}\n{enteredDetails}");
             if (itemFormat is null) return;
+            enteredDetails.Append($"Format: {itemFormat} ");
 
             if (!verificationService.TryParseItemFormat(itemFormat, out format))
             {
@@ -223,8 +231,9 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
         {
             const string prompt = "Please enter an item type:";
             const string instructions = "Valid item types are only: Album, Single, or Mixtape";
-            var itemType = UiHelper.GetArgument(prompt, instructions);
+            var itemType = UiHelper.GetArgument(prompt, $"{instructions}\n{enteredDetails}");
             if (itemType is null) return;
+            enteredDetails.Append($"Type: {itemType} ");
 
             if (!verificationService.TryParseItemType(itemType, out type))
             {
@@ -238,7 +247,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
 
         while (true)
         {
-            var unparsedPrice = UiHelper.GetArgument("Please enter the item's price:");
+            var unparsedPrice = UiHelper.GetArgument("Please enter the item's price:", enteredDetails.ToString());
             if (unparsedPrice is null) return;
 
             if (!verificationService.TryValidateItemPrice(unparsedPrice, out price, out var errorMessage))

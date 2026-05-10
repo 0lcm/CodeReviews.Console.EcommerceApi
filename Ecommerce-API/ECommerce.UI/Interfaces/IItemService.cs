@@ -6,7 +6,7 @@ namespace ECommerce.UI.Interfaces;
 public interface IItemService
 {
     public Task<PagedResponse<ItemDto>> GetItemsAsync(int pageNumber = 1, int pageSize = 10,
-        string? searchTerm = null, string? searchGenre = null);
+        string? searchTerm = null, string? searchGenre = null, List<TagDto>? tags = null);
 
     public Task<ItemDto> GetItemByIdAsync(int id);
     public Task DeleteItemAsync(int id);

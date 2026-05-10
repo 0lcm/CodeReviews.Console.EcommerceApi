@@ -1,4 +1,6 @@
-﻿using ECommerce.UI.Enums;
+﻿using System.Net;
+using ECommerce.Shared.Models;
+using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
 using ECommerce.UI.Interfaces;
 using Spectre.Console;
@@ -44,7 +46,8 @@ internal class ManageProductTagsUi(ITagService tagService)
     ///     Presents a list of tags to the user and handles pagination
     /// </summary>
     /// <param name="searchTerm">optional search term to filter results</param>
-    private async Task ReviewTags(string? searchTerm = null)
+    /// <param name="returnTagSelection">returns a list of tags selected by the user if set to true</param>
+    internal async Task<List<TagDto>?> ReviewTags(string? searchTerm = null, bool returnTagSelection = false)
     {
         var pageNumber = 1;
         while (true)
@@ -52,12 +55,22 @@ internal class ManageProductTagsUi(ITagService tagService)
             {
                 Console.Clear();
                 var response = await tagService.GetTagsAsync(pageNumber, searchTerm: searchTerm);
-                var iRenderable = _uiHelper.BuildTagDtoRenderable(response);
 
+                if (!returnTagSelection)
+                {
+                    var table = _uiHelper.BuildTagTable(response);
+                    DisplayTable(table);
+                }
+                else
+                {
+                    var selection = DisplayMultiPrompt(response.Data.Select(t => t.TagName).ToList());
+                    var selectedTags = response.Data
+                        .Where(t => selection.Contains(t.TagName))
+                        .ToList();
+                    return selectedTags;
+                }
 
-                DisplayRows(iRenderable);
-
-                var option = DisplayMenu<PaginationController>();
+                var option = UiHelper.DisplayPaginationController(response.PageNumber, response.TotalPages);
                 switch (option)
                 {
                     case PaginationController.LastPage:
@@ -67,29 +80,41 @@ internal class ManageProductTagsUi(ITagService tagService)
                         pageNumber += 1;
                         break;
                     case PaginationController.Back:
-                        return;
+                        return null;
                 }
             }
             catch (HttpRequestException ex)
             {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    DisplayWarning("No results were found when searching, please try a different search or make sure the database isn't empty.");
+                    UiHelper.WaitForUser();
+                    return null;
+                }
                 UiHelper.DisplayCaughtException(ex);
-                return;
+                return null;
             }
     }
 
-    private async Task SearchTags()
+    /// <summary>
+    /// Searches the database for tags matching a search term
+    /// </summary>
+    /// <param name="returnSearchTags">Optional parameter to return a list of tags selected from search</param>
+    /// <returns></returns>
+    internal async Task<List<TagDto>?> SearchTags(bool returnSearchTags = false)
     {
         while (true)
         {
+            List<TagDto>? selectedTags = null;
             Console.Clear();
 
             var searchTerm = UiHelper.GetArgument("Please enter a term to search by:");
-            if (searchTerm is null) return;
+            if (searchTerm is null) return null;
 
-            await ReviewTags(searchTerm);
+            selectedTags = await ReviewTags(searchTerm, returnTagSelection: returnSearchTags);
 
             if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))
-                return;
+                return returnSearchTags ? selectedTags : null;
         }
     }
 

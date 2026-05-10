@@ -10,10 +10,10 @@ namespace ECommerce.UI.Services;
 public class ItemService(IApiService apiService) : IItemService
 {
     public async Task<PagedResponse<ItemDto>> GetItemsAsync(int pageNumber = 1, int pageSize = 10,
-        string? searchTerm = null, string? searchGenre = null)
+        string? searchTerm = null, string? searchGenre = null, List<TagDto>? searchTags = null)
     {
         var requestUrl = Utils.FormatQueryWithPaginationParams(ApiUris.ItemRequestUri,
-            pageNumber, pageSize, searchTerm, searchGenre);
+            pageNumber, pageSize, searchTerm, searchGenre, searchTags);
 
         var rawJson = await apiService.GetAsync(requestUrl);
         return JsonSerializer.Deserialize<PagedResponse<ItemDto>>(rawJson, Utils.GetJsonSerializerOptions())!;

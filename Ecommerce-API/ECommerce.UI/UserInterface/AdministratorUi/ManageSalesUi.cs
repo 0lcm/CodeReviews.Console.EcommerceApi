@@ -1,4 +1,5 @@
-﻿using ECommerce.UI.Enums;
+﻿using System.Net;
+using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
 using ECommerce.UI.Interfaces;
 using Spectre.Console;
@@ -42,12 +43,12 @@ internal class ManageSalesUi(ISaleService saleService, IVerificationService veri
             {
                 Console.Clear();
                 var response = await saleService.GetSalesAsync(pageNumber);
-                var iRenderable = UiHelper.BuildSaleDtoRenderable(response);
+                var table = UiHelper.BuildSaleTable(response);
 
 
-                DisplayRows(iRenderable);
+                DisplayTable(table);
 
-                var option = DisplayMenu<PaginationController>();
+                var option = UiHelper.DisplayPaginationController(response.PageNumber, response.TotalPages);
                 switch (option)
                 {
                     case PaginationController.LastPage:
@@ -62,6 +63,12 @@ internal class ManageSalesUi(ISaleService saleService, IVerificationService veri
             }
             catch (HttpRequestException ex)
             {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    DisplayWarning("No results were found when searching, please try a different search or make sure the database isn't empty.");
+                    UiHelper.WaitForUser();
+                    return;
+                }
                 UiHelper.DisplayCaughtException(ex);
                 return;
             }

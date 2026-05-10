@@ -1,4 +1,7 @@
-﻿using ECommerce.Shared;
+﻿using System.Net;
+using System.Text;
+using ECommerce.Shared;
+using ECommerce.Shared.Models;
 using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
 using ECommerce.UI.Interfaces;
@@ -7,7 +10,7 @@ using static ECommerce.UI.Helpers.DisplayHelper;
 
 namespace ECommerce.UI.UserInterface.AdministratorUi;
 
-internal class ManageProductsUi(IItemService itemService, IVerificationService verificationService)
+internal class ManageProductsUi(IItemService itemService, IVerificationService verificationService, ManageProductTagsUi tagsMenu)
 {
     //------- Menu Methods -------
     internal async Task ManageProductsMenu()
@@ -43,21 +46,36 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
     /// </summary>
     /// <param name="searchTerm">optional search term to filter results</param>
     /// <param name="searchGenre">optional genre filter</param>
-    private async Task ReviewProductsMenu(string? searchTerm = null, string? searchGenre = null)
+    /// <param name="searchTags">options tag filter</param>
+    /// <param name="returnSelectedProduct">decides if a list of selected products should be returned</param>
+    /// <returns>A selected product if returnSelectedProduct is set to true, or null if set to false</returns>
+    private async Task<ItemDto?> ReviewProductsMenu(string? searchTerm = null, string? searchGenre = null, List<TagDto>? searchTags = null, bool returnSelectedProduct = false)
     {
         var pageNumber = 1;
         while (true)
             try
             {
                 Console.Clear();
-                var response =
-                    await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre);
-                var iRenderable = UiHelper.BuildItemDtoRenderable(response);
+                var response = await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre, tags: searchTags);
 
+                if (!returnSelectedProduct)
+                {
+                    var table = UiHelper.BuildItemTable(response);
+                    DisplayTable(table);
+                }
+                else
+                {
+                    var dictionary = new Dictionary<string, ItemDto>();
+                    foreach (var item in response.Data)
+                    {
+                        dictionary.Add($"{item.Name} - {item.Artist}", item);
+                    }
 
-                DisplayRows(iRenderable);
+                    var selection = DisplayPrompt(dictionary.Keys.ToList());
+                    return dictionary[selection];
+                }
 
-                var option = DisplayMenu<PaginationController>();
+                var option = UiHelper.DisplayPaginationController(response.PageNumber, response.TotalPages);
                 switch (option)
                 {
                     case PaginationController.LastPage:
@@ -67,17 +85,28 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                         pageNumber += 1;
                         break;
                     case PaginationController.Back:
-                        return;
+                        return null;
                 }
             }
             catch (HttpRequestException ex)
             {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    DisplayWarning("No results were found when searching, please try a different search or make sure the database isn't empty.");
+                    UiHelper.WaitForUser();
+                    return null;
+                }
                 UiHelper.DisplayCaughtException(ex);
-                return;
+                return null;
             }
     }
 
-    private async Task SearchProducts()
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="returnProduct">Decides if the method should return the selected product or not</param>
+    /// <returns>The selected product, or null if returnProduct is set to false</returns>
+    private async Task<ItemDto?> SearchProducts(bool returnProduct = false)
     {
         while (true)
         {
@@ -93,7 +122,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                     .Select(s => Enum.Parse<SearchController>(s))
                     .ToList();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 DisplayWarning("Please select to either search by a given search term, or filter by genre.");
                 UiHelper.WaitForUser();
@@ -102,11 +131,31 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
 
             string? searchTerm = null;
             string? searchGenre = null;
+            List<TagDto>? searchTags = null;
 
             if (selectedFilters.Contains(SearchController.SearchByTerm))
             {
                 Console.Clear();
                 searchTerm = DisplayQuestion("Please enter a term to search for:");
+            }
+
+            if (selectedFilters.Contains(SearchController.FilterByTags))
+            {
+                switch (DisplayMenu<SearchTagsController>())
+                {
+                    case SearchTagsController.SearchForSpecificTag:
+                        searchTags = await tagsMenu.SearchTags(true);
+                        break;
+                    
+                    case SearchTagsController.BrowseAllTags:
+                        searchTags = await tagsMenu.ReviewTags(returnTagSelection: true);
+                        break;
+                    
+                    case SearchTagsController.Back:
+                        break;
+                }
+                
+                if (searchTags is null || searchTags.Count == 0) return null;
             }
 
             if (selectedFilters.Contains(SearchController.FilterByGenre))
@@ -115,10 +164,11 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                 searchGenre = DisplayQuestion("Please enter a genre to filter by:");
             }
 
-            await ReviewProductsMenu(searchTerm, searchGenre);
+            var item = await ReviewProductsMenu(searchTerm, searchGenre, searchTags, returnProduct);
+            if (returnProduct) return item;
 
             if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))
-                return;
+                return null;
         }
     }
 
@@ -127,61 +177,59 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
         ItemFormat format;
         ItemType type;
         decimal price;
+        var enteredDetails = new StringBuilder();
 
         var title = UiHelper.GetArgument("Please enter the item title:");
         if (title is null) return;
+        enteredDetails.Append($"Title: {title} ");
 
-        var artist = UiHelper.GetArgument("Please enter the artist's name:");
+        var artist = UiHelper.GetArgument("Please enter the artist's name:", enteredDetails.ToString());
         if (artist is null) return;
+        enteredDetails.Append($"Artist: {artist} ");
 
-        var genre = UiHelper.GetArgument("Please enter the genre:");
+        var genre = UiHelper.GetArgument("Please enter the genre:", enteredDetails.ToString());
         if (genre is null) return;
+        enteredDetails.Append($"Genre: {genre} ");
 
-        var tags = UiHelper.GetArgument("Please enter any tags separated by commas:");
-        if (tags is null) return;
+        var tagOption = DisplayMenu<TagAdditionMethodForItem>();
+        List<TagDto>? selectedTags = null;
 
-        while (true)
+        switch (tagOption)
         {
-            const string prompt = "Please enter an item format:";
-            const string instructions = "Valid item formats are only: Vinyl, Cd, or Digital.";
-            var itemFormat = UiHelper.GetArgument(prompt, instructions);
-            if (itemFormat is null) return;
-
-            if (!verificationService.TryParseItemFormat(itemFormat, out format))
-            {
-                DisplayWarning("Please choose either: vinyl, cd, or digital format.");
-                UiHelper.WaitForUser();
-                continue;
-            }
-
-            break;
+            case TagAdditionMethodForItem.SearchForAnExistingTag:
+                selectedTags = await tagsMenu.SearchTags(returnSearchTags: true);
+                break;
+            case TagAdditionMethodForItem.CreateNewTag:
+                var response = UiHelper.GetArgument("Please enter tag names separated by a ','");
+                if (response is null) return;
+                selectedTags = response.Split(',')
+                    .Select(name => new TagDto { TagName = name.Trim() })
+                    .ToList();
+                break;
+            case TagAdditionMethodForItem.CreateWithoutTags:
+                break;
         }
 
-        while (true)
-        {
-            const string prompt = "Please enter an item type:";
-            const string instructions = "Valid item types are only: Album, Single, or Mixtape";
-            var itemType = UiHelper.GetArgument(prompt, instructions);
-            if (itemType is null) return;
+        string tags = selectedTags is not null
+            ? string.Join(", ", selectedTags.Select(t => t.TagName))
+            : string.Empty;
+        if (string.IsNullOrWhiteSpace(tags)) tags = "No Tags";
+        enteredDetails.Append($"Tags: {tags} ");
 
-            if (!verificationService.TryParseItemType(itemType, out type))
-            {
-                DisplayWarning("Please choose either: album, single, or mixtape type.");
-                UiHelper.WaitForUser();
-                continue;
-            }
-
-            break;
-        }
+        format = DisplayMenu<ItemFormat>();
+        enteredDetails.Append($"Format: {format} ");
+            
+        type = DisplayMenu<ItemType>();
+        enteredDetails.Append($"Type: {type} ");
 
         while (true)
         {
-            var unparsedPrice = UiHelper.GetArgument("Please enter the item's price:");
+            var unparsedPrice = UiHelper.GetArgument("Please enter the item's price:", enteredDetails.ToString());
             if (unparsedPrice is null) return;
 
-            if (!verificationService.TryParseDecimal(unparsedPrice, out price))
+            if (!verificationService.TryValidateItemPrice(unparsedPrice, out price, out var errorMessage))
             {
-                DisplayWarning("Please enter a valid number.");
+                DisplayWarning(errorMessage ?? "Please enter a valid price for this product.");
                 UiHelper.WaitForUser();
                 continue;
             }
@@ -205,23 +253,14 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
     {
         while (true)
         {
-            int id;
             try
             {
-                var unparsedId = UiHelper.GetArgument("Please enter the ID of the product to delete:");
-                if (string.IsNullOrWhiteSpace(unparsedId)) throw new ArgumentNullException();
-
-                var success = int.TryParse(unparsedId, out id);
-                if (!success)
-                {
-                    DisplayWarning("Please enter a valid product ID containing only numbers.");
-                    UiHelper.WaitForUser();
-                    continue;
-                }
-
+                var item = await SearchProducts(returnProduct: true);
+                if (item is null) return;
+                
                 if (await AnsiConsole.ConfirmAsync("Are you sure you want to delete this item?"))
                 {
-                    await itemService.DeleteItemAsync(id);
+                    await itemService.DeleteItemAsync(item.ItemId);
                     DisplaySuccess("Successfully deleted product.");
                 }
                 else
@@ -230,6 +269,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                 }
 
                 UiHelper.WaitForUser();
+                return;
             }
             catch (Exception ex)
             {

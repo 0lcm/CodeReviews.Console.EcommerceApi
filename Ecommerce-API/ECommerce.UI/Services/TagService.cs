@@ -12,7 +12,7 @@ public class TagService(IApiService apiService) : ITagService
         string? searchTerm = null)
     {
         var requestUrl = Utils.FormatQueryWithPaginationParams(ApiUris.TagRequestUri,
-            pageNumber, pageSize, searchTerm, null);
+            pageNumber, pageSize, searchTerm, null, null);
 
         var rawJson = await apiService.GetAsync(requestUrl);
         return JsonSerializer.Deserialize<PagedResponse<TagDto>>(rawJson, Utils.GetJsonSerializerOptions())!;

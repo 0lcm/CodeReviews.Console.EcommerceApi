@@ -47,6 +47,7 @@ public class SaleService(ISaleRepository repo, IItemRepository itemRepo) : ISale
     {
         var query = repo.GetSales();
         var totalRecords = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)totalRecords / paginationParams.PageSize);
         var sales = await query
             .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
             .Take(paginationParams.PageSize)
@@ -71,7 +72,7 @@ public class SaleService(ISaleRepository repo, IItemRepository itemRepo) : ISale
             }).ToListAsync();
 
         return new PagedResponse<SaleDto>
-            (sales, paginationParams.PageNumber, paginationParams.PageSize, totalRecords);
+            (sales, paginationParams.PageNumber, paginationParams.PageSize, totalRecords, totalPages);
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
 ﻿using ECommerce.Shared.Models;
+using ECommerce.UI.Enums;
 using ECommerce.UI.Interfaces;
 using Spectre.Console;
 using Spectre.Console.Rendering;
@@ -8,52 +9,56 @@ namespace ECommerce.UI.Helpers;
 
 internal class UiHelper(ITagService tagService)
 {
-    internal static List<IRenderable> BuildItemDtoRenderable(PagedResponse<ItemDto> response)
+    internal static Table BuildItemTable(PagedResponse<ItemDto> response)
     {
-        List<IRenderable> iRenderable = [];
+        var table = new Table().ShowRowSeparators();
+        
+        table.AddColumn($"[{White}]Title[/]");
+        table.AddColumn($"[{White}]Artist[/]");
+        table.AddColumn($"[{White}]Type / Format[/]");
+        table.AddColumn($"[{White}]Genre[/]");
+        table.AddColumn($"[{White}]Tags[/]");
+        table.AddColumn($"[{White}]Price[/]");
+        table.AddColumn($"[{White}]Item ID[/]");
 
         foreach (var item in response.Data)
         {
-            iRenderable.Add(new Markup($"[{White}]\nTitle: [/][{Green}]{item.Name}[/]"));
-            iRenderable.Add(new Markup($"[{White}]Artist: [/][{Grey}]{item.Artist}[/]"));
-            iRenderable.Add(new Markup($"[{White}]Type / Format: [/][{Grey}]{item.Type} / {item.Format}[/]"));
-            iRenderable.Add(new Markup($"[{White}]Genre: [/][{Grey}]{item.Genre}[/]"));
-            iRenderable.Add(
-                new Markup($"[{White}]Tags: [/][{Grey}]{string.Join(", ", item.Tags.Select(t => t.TagName))}[/]"));
-            iRenderable.Add(new Markup($"[{White}]Price: [/][{Grey}]{item.Price}[/]"));
-            iRenderable.Add(new Markup($"[{White}]Item ID: [/][{Yellow}]{item.ItemId}[/]"));
+            var tags = string.Join(", ", item.Tags.Select(t => t.TagName));
+            table.AddRow(item.Name, item.Artist, $"{item.Type} / {item.Format}", item.Genre, tags, $"{item.Price}", $"{item.ItemId}");
         }
 
-        return iRenderable;
+        return table;
     }
-
-    internal List<IRenderable> BuildTagDtoRenderable(PagedResponse<TagDto> response)
+    
+    internal Table BuildTagTable(PagedResponse<TagDto> response)
     {
-        List<IRenderable> iRenderable = [];
+        var table = new Table();
+        
+        table.AddColumn($"[{White}]Title[/]");
 
         foreach (var tag in response.Data)
         {
-            var tagId = tagService.GetTagIdByNameAsync(tag.TagName).Result;
-            iRenderable.Add(new Markup($"[{White}]\nTag ID: [/][{Green}]{tagId}[/]"));
-            iRenderable.Add(new Markup($"[{White}]Title: [/][{Grey}]{tag.TagName}[/]"));
+            table.AddRow(tag.TagName);
         }
 
-        return iRenderable;
+        return table;
     }
-
-    internal static List<IRenderable> BuildSaleDtoRenderable(PagedResponse<SaleDto> response)
+    
+    internal static Table BuildSaleTable(PagedResponse<SaleDto> response)
     {
-        List<IRenderable> iRenderable = [];
+        var table = new Table();
+        
+        table.AddColumn($"[{White}]Sale ID[/]", col => col.Centered());
+        table.AddColumn($"[{White}]Sold Items[/]", col => col.Centered());
+        table.AddColumn($"[{White}]Total Price[/]", col => col.Centered());
 
         foreach (var sale in response.Data)
         {
-            iRenderable.Add(new Markup($"[{White}]\nID: [/][{Green}]{sale.SaleId}[/]"));
-            iRenderable.Add(new Markup(
-                $"[{White}]Items: [/][{Grey}]{string.Join(',', sale.SoldItems.Select(s => $"{s.Item.Name} x{s.Quantity}"))}[/]"));
-            iRenderable.Add(new Markup($"[{White}]Total price: [/][{Grey}]{sale.TotalPrice}[/]"));
+            var soldItems = string.Join(", ", sale.SoldItems.Select(s => $"{s.Item.Name} x {s.Quantity}"));
+            table.AddRow($"{sale.SaleId}", soldItems, $"{sale.TotalPrice}");
         }
 
-        return iRenderable;
+        return table;
     }
 
     /// <summary>
@@ -131,5 +136,38 @@ internal class UiHelper(ITagService tagService)
         var value = DisplayQuestion(prompt);
 
         return string.Equals(value, backOption, StringComparison.OrdinalIgnoreCase) ? null : value;
+    }
+
+    /// <summary>
+    /// Displays a pagination menu, handling edge cases for first and last pages
+    /// </summary>
+    /// <param name="pageNumber"></param>
+    /// <param name="totalPages"></param>
+    /// <returns>The chosen PaginationController selection</returns>
+    internal static PaginationController DisplayPaginationController(int pageNumber, int totalPages)
+    {
+        IEnumerable<PaginationController> options;
+        if (pageNumber >= totalPages && totalPages > 1)
+        {
+            options = Enum.GetValues(typeof(PaginationController))
+                .Cast<PaginationController>()
+                .Where(p => p != PaginationController.NextPage)
+                .ToList();
+        }
+        else if (pageNumber <= 1)
+        {
+            options = Enum.GetValues(typeof(PaginationController))
+                .Cast<PaginationController>()
+                .Where(p => p != PaginationController.LastPage)
+                .ToList();
+        }
+        else
+        {
+            options = Enum.GetValues(typeof(PaginationController))
+                .Cast<PaginationController>()
+                .ToList();
+        }
+
+        return DisplayMenu(options);
     }
 }

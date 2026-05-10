@@ -14,5 +14,6 @@ public class PaginationParams
     }
 
     public string SearchTerm { get; set; } = string.Empty;
+    public List<string> SearchTags { get; set; } = [];
     public string Genre { get; set; } = string.Empty;
 }

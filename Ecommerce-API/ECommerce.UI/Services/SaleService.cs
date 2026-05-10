@@ -11,7 +11,7 @@ public class SaleService(IApiService apiService, IItemService itemService) : ISa
     public async Task<PagedResponse<SaleDto>> GetSalesAsync(int pageNumber = 1, int pageSize = 10)
     {
         var requestUrl =
-            Utils.FormatQueryWithPaginationParams(ApiUris.SaleRequestUri, pageNumber, pageSize, null, null);
+            Utils.FormatQueryWithPaginationParams(ApiUris.SaleRequestUri, pageNumber, pageSize, null, null, null);
         var rawJson = await apiService.GetAsync(requestUrl);
 
         return JsonSerializer.Deserialize<PagedResponse<SaleDto>>(rawJson, Utils.GetJsonSerializerOptions())!;

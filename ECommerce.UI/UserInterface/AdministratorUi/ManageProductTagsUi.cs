@@ -1,4 +1,5 @@
-﻿using ECommerce.Shared.Models;
+﻿using System.Net;
+using ECommerce.Shared.Models;
 using ECommerce.UI.Enums;
 using ECommerce.UI.Helpers;
 using ECommerce.UI.Interfaces;
@@ -84,6 +85,12 @@ internal class ManageProductTagsUi(ITagService tagService)
             }
             catch (HttpRequestException ex)
             {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    DisplayWarning("No results were found when searching, please try a different search or make sure the database isn't empty.");
+                    UiHelper.WaitForUser();
+                    return null;
+                }
                 UiHelper.DisplayCaughtException(ex);
                 return null;
             }

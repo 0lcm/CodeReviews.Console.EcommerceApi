@@ -26,6 +26,14 @@ internal enum PaginationController
     Back
 }
 
+internal enum PaginationControllerWithSelection
+{
+    LastPage,
+    NextPage,
+    SelectProduct,
+    Back
+}
+
 internal enum SearchController
 {
     SearchByTerm,

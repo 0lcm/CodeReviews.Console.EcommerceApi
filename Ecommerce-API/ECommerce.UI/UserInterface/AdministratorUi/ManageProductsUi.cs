@@ -47,9 +47,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
     /// <param name="searchTerm">optional search term to filter results</param>
     /// <param name="searchGenre">optional genre filter</param>
     /// <param name="searchTags">options tag filter</param>
-    /// <param name="returnSelectedProduct">decides if a list of selected products should be returned</param>
-    /// <returns>A selected product if returnSelectedProduct is set to true, or null if set to false</returns>
-    private async Task<ItemDto?> ReviewProductsMenu(string? searchTerm = null, string? searchGenre = null, List<TagDto>? searchTags = null, bool returnSelectedProduct = false)
+    private async Task ReviewProductsMenu(string? searchTerm = null, string? searchGenre = null, List<TagDto>? searchTags = null)
     {
         var pageNumber = 1;
         while (true)
@@ -57,23 +55,9 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
             {
                 Console.Clear();
                 var response = await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm, searchGenre: searchGenre, tags: searchTags);
-
-                if (!returnSelectedProduct)
-                {
-                    var table = UiHelper.BuildItemTable(response);
-                    DisplayTable(table);
-                }
-                else
-                {
-                    var dictionary = new Dictionary<string, ItemDto>();
-                    foreach (var item in response.Data)
-                    {
-                        dictionary.Add($"{item.Name} - {item.Artist}", item);
-                    }
-
-                    var selection = DisplayPrompt(dictionary.Keys.ToList());
-                    return dictionary[selection];
-                }
+                
+                var table = UiHelper.BuildItemTable(response);
+                DisplayTable(table);
 
                 var option = UiHelper.DisplayPaginationController(response.PageNumber, response.TotalPages);
                 switch (option)
@@ -85,8 +69,60 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                         pageNumber += 1;
                         break;
                     case PaginationController.Back:
+                        return;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    DisplayWarning("No results were found when searching, please try a different search or make sure the database isn't empty.");
+                    UiHelper.WaitForUser();
+                    return;
+                }
+                UiHelper.DisplayCaughtException(ex);
+                return;
+            }
+    }
+
+    private async Task<ItemDto?> SelectProduct(string? searchTerm = null, string? searchGenre = null,
+        List<TagDto>? searchTags = null)
+    {
+        var pageNumber = 1;
+        while (true)
+        {
+            try
+            {
+                Console.Clear();
+                var response = await itemService.GetItemsAsync(pageNumber, searchTerm: searchTerm,
+                    searchGenre: searchGenre, tags: searchTags);
+                
+                var table = UiHelper.BuildItemTable(response);
+                DisplayTable(table);
+                
+                var option = UiHelper.DisplayPaginationControllerWithSelectionOption(response.PageNumber, response.TotalPages);
+                switch (option)
+                {
+                    case PaginationControllerWithSelection.LastPage:
+                        pageNumber = pageNumber == 1 ? 1 : pageNumber - 1;
+                        continue;
+                    case PaginationControllerWithSelection.NextPage:
+                        pageNumber += 1; 
+                        continue;
+                    case PaginationControllerWithSelection.SelectProduct:
+                        break;
+                    case PaginationControllerWithSelection.Back:
                         return null;
                 }
+
+                Dictionary<string, ItemDto> dictionary = new();
+                foreach (var item in response.Data)
+                {
+                    dictionary.Add($"{item.Name} - {item.Artist} | {item.Price}", item);
+                }
+
+                var selection = DisplayPrompt(dictionary.Keys.ToList());
+                return dictionary[selection];
             }
             catch (HttpRequestException ex)
             {
@@ -99,6 +135,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                 UiHelper.DisplayCaughtException(ex);
                 return null;
             }
+        }
     }
 
     /// <summary>
@@ -148,7 +185,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                         break;
                     
                     case SearchTagsController.BrowseAllTags:
-                        searchTags = await tagsMenu.ReviewTags(returnTagSelection: true);
+                        searchTags = await tagsMenu.SelectTag(allowMultiSelection: true);
                         break;
                     
                     case SearchTagsController.Back:
@@ -164,7 +201,7 @@ internal class ManageProductsUi(IItemService itemService, IVerificationService v
                 searchGenre = DisplayQuestion("Please enter a genre to filter by:");
             }
 
-            var item = await ReviewProductsMenu(searchTerm, searchGenre, searchTags, returnProduct);
+            var item = await SelectProduct(searchTerm, searchGenre, searchTags);
             if (returnProduct) return item;
 
             if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))

@@ -147,7 +147,14 @@ internal class UiHelper(ITagService tagService)
     internal static PaginationController DisplayPaginationController(int pageNumber, int totalPages)
     {
         IEnumerable<PaginationController> options;
-        if (pageNumber >= totalPages && totalPages > 1)
+        if (totalPages == 1)
+        {
+            options = Enum.GetValues(typeof(PaginationController))
+                .Cast<PaginationController>()
+                .Where(p => p == PaginationController.Back)
+                .ToList();
+        }
+        else if (pageNumber >= totalPages && totalPages > 1)
         {
             options = Enum.GetValues(typeof(PaginationController))
                 .Cast<PaginationController>()
@@ -165,6 +172,41 @@ internal class UiHelper(ITagService tagService)
         {
             options = Enum.GetValues(typeof(PaginationController))
                 .Cast<PaginationController>()
+                .ToList();
+        }
+
+        return DisplayMenu(options);
+    }
+
+    internal static PaginationControllerWithSelection DisplayPaginationControllerWithSelectionOption(int pageNumber,
+        int totalPages)
+    {
+        IEnumerable<PaginationControllerWithSelection> options;
+        if (totalPages == 1)
+        {
+            options = Enum.GetValues(typeof(PaginationControllerWithSelection))
+                .Cast<PaginationControllerWithSelection>()
+                .Where(p => p == PaginationControllerWithSelection.Back || p == PaginationControllerWithSelection.SelectProduct)
+                .ToList();
+        }
+        else if (pageNumber >= totalPages && totalPages > 1)
+        {
+            options = Enum.GetValues(typeof(PaginationControllerWithSelection))
+                .Cast<PaginationControllerWithSelection>()
+                .Where(p => p != PaginationControllerWithSelection.NextPage)
+                .ToList();
+        }
+        else if (pageNumber <= 1)
+        {
+            options = Enum.GetValues(typeof(PaginationControllerWithSelection))
+                .Cast<PaginationControllerWithSelection>()
+                .Where(p => p != PaginationControllerWithSelection.LastPage)
+                .ToList();
+        }
+        else
+        {
+            options = Enum.GetValues(typeof(PaginationControllerWithSelection))
+                .Cast<PaginationControllerWithSelection>()
                 .ToList();
         }
 

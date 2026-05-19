@@ -13,9 +13,9 @@ public class VerificationService : IVerificationService
             return false;
         }
         
-        if (itemPrice < 0)
+        if (itemPrice <= 0)
         {
-            errorMessage = "Item price cannot be a negative number.";
+            errorMessage = "Item price must be greater than or equal to 1.";
             return false;
         }
         

@@ -96,6 +96,62 @@ internal class ManageProductTagsUi(ITagService tagService)
             }
     }
 
+    internal async Task<List<TagDto>?> SelectTag(bool allowMultiSelection = false)
+    {
+        var pageNumber = 1;
+        while (true)
+        {
+            try
+            {
+                var response = await tagService.GetTagsAsync();
+                
+                var table = _uiHelper.BuildTagTable(response);
+                DisplayTable(table);
+                
+                var option = UiHelper.DisplayPaginationControllerWithSelectionOption(response.PageNumber, response.TotalPages);
+                switch (option)
+                {
+                    case PaginationControllerWithSelection.LastPage:
+                        pageNumber = pageNumber == 1 ? 1 : pageNumber - 1;
+                        continue;
+                    case PaginationControllerWithSelection.NextPage:
+                        pageNumber++;
+                        continue;
+                    case PaginationControllerWithSelection.SelectProduct:
+                        break;
+                    case PaginationControllerWithSelection.Back:
+                        return null;
+                }
+                
+                Dictionary<string, TagDto> dictionary = new();
+                foreach (var tag in response.Data)
+                {
+                    dictionary.Add(tag.TagName, tag);
+                }
+
+                if (allowMultiSelection)
+                {
+                    var selections = DisplayMultiPrompt(dictionary.Keys.ToList(), requireChoice: true);
+                    return dictionary.Where(v => selections.Contains(v.Key)).Select(v => v.Value).ToList();
+                }
+
+                var selection = DisplayPrompt(dictionary.Keys.ToList());
+                return new List<TagDto> {dictionary[selection]};
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    DisplayWarning("No results were found when searching, please try a different search or make sure the database isn't empty.");
+                    UiHelper.WaitForUser();
+                    return null;
+                }
+                UiHelper.DisplayCaughtException(ex);
+                return null;
+            }
+        }
+    }
+
     /// <summary>
     /// Searches the database for tags matching a search term
     /// </summary>
@@ -111,7 +167,14 @@ internal class ManageProductTagsUi(ITagService tagService)
             var searchTerm = UiHelper.GetArgument("Please enter a term to search by:");
             if (searchTerm is null) return null;
 
-            selectedTags = await ReviewTags(searchTerm, returnTagSelection: returnSearchTags);
+            if (returnSearchTags)
+            {
+                selectedTags = await SelectTag(allowMultiSelection: true);
+            }
+            else
+            {
+                selectedTags = await ReviewTags(searchTerm);
+            }
 
             if (!await AnsiConsole.ConfirmAsync("Would you like to perform another search?"))
                 return returnSearchTags ? selectedTags : null;
@@ -147,22 +210,16 @@ internal class ManageProductTagsUi(ITagService tagService)
     {
         while (true)
         {
-            var id = UiHelper.GetArgument("Please enter the ID of the tag you want to delete:");
-            if (id is null) return;
-
-            if (!int.TryParse(id, out var parsedId))
-            {
-                DisplayWarning("Please enter a valid ID containing only numbers.");
-                UiHelper.WaitForUser();
-                continue;
-            }
-
-            if (!await AnsiConsole.ConfirmAsync($"Are you sure you want to delete the tag ID {id}?"))
+            var tags = await SelectTag();
+            if (tags is null) return;
+            var tagId = await tagService.GetTagIdByNameAsync(tags[0].TagName);
+            
+            if (!await AnsiConsole.ConfirmAsync($"Are you sure you want to delete this tag?"))
                 continue;
 
             try
             {
-                await tagService.DeleteTagAsync(parsedId);
+                await tagService.DeleteTagAsync(tagId);
                 DisplaySuccess("Successfully deleted tag.");
                 UiHelper.WaitForUser();
             }
